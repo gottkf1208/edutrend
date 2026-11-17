@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   var EDU = window.EDU, U = EDU.util, $ = U.$, $$ = U.$$, esc = U.esc, icon = U.icon;
-  var TABS = [['home', 'home', '홈'], ['me', 'user', '내 정보'], ['studio', 'image', '카드'], ['captions', 'pen', '글감'], ['ai', 'wand', 'AI'], ['library', 'grid', '진열대']];
+  var TABS = [['home', 'home', '홈'], ['me', 'user', '내 정보'], ['studio', 'image', '카드'], ['library', 'grid', '진열대'], ['captions', 'pen', '글감'], ['ai', 'wand', 'AI']];
 
   function coverSave() {
     var c = (window.EDU_ASSETS || {}).covers || {}, b = c.book3d || {};
