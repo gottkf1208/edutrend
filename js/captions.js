@@ -169,7 +169,7 @@
 
   /* ---------- 상태(저장) ---------- */
   var store = (EDU.util && EDU.util.store) || { get: function (k, d) { return d; }, set: function () {} };
-  var S = { platform: 'ig', mood: 'plain', emoji: false, vi: {}, tagOv: {}, custom: [] };
+  var S = { platform: 'ig', mood: 'spoiler', emoji: false, vi: {}, tagOv: {}, custom: [] };
   (function load() {
     var saved = store.get(KEY, null);
     if (!saved || typeof saved !== 'object') return;

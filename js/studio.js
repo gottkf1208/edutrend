@@ -30,7 +30,8 @@
     { id: 'cover', name: '표지 그대로', type: 'image/png' },
     { id: 'art', name: '키워드 그림', type: 'image/png' },
     { id: 'quote', name: '한 문장', type: 'image/png' },
-    { id: 'shelf', name: '네 권의 서가', type: 'image/png' }
+    { id: 'shelf', name: '네 권의 서가', type: 'image/png' },
+    { id: 'bingo', name: '키워드 빙고', type: 'image/png' }
   ];
   var TABS = [['size', '크기'], ['design', '디자인'], ['show', '표시']];
   var MASKS = [['sq', '네모'], ['kakao', '카톡'], ['insta', '인스타']];
@@ -48,7 +49,7 @@
 
   /* ---------- state ---------- */
   var SKEY = 'edutrend.studio.v1';
-  var state = { ratio: '4x5', template: 'cover', tab: 'size', mask: 'kakao', show: { name: true, org: true, handle: true } };
+  var state = { ratio: '4x5', template: 'cover', tab: 'size', mask: 'kakao', hook: 0, show: { name: true, org: true, handle: true } };
   (function () {
     var s = U.store.get(SKEY, null);
     if (!s || typeof s !== 'object') return;
@@ -56,6 +57,7 @@
     if (byId(TEMPLATES, s.template)) state.template = s.template;
     if (s.tab === 'size' || s.tab === 'design' || s.tab === 'show') state.tab = s.tab;
     if (s.mask === 'sq' || s.mask === 'kakao' || s.mask === 'insta') state.mask = s.mask;
+    if (s.hook >= 0) state.hook = s.hook | 0;
     if (s.show && typeof s.show === 'object') ['name', 'org', 'handle'].forEach(function (k) { if (typeof s.show[k] === 'boolean') state.show[k] = s.show[k]; });
   })();
   function save() { U.store.set(SKEY, state); }
@@ -68,9 +70,21 @@
       kw: kw ? clean(kw.name, 40) : '', kwId: kw && kw.id !== 'custom' ? kw.id : '',
       fileKw: kw ? clean(kw.tag || kw.name, 40).replace(/\s+/g, '') : '', fileName: pf ? clean(p.name, 24) : (show.name ? clean(p.name, 24) : '')
     };
-    d.line = clean(p.line, 110) || (d.kw ? d.kw + ',\n제가 썼어요' : '네 번째 책이 나왔어요');   // 한 줄 소개가 없을 때 — 평범한 말로
+    d.kwNo = d.kwId ? parseInt(d.kwId.slice(1), 10) : 0;
+    d.own = !!clean(p.line, 110);
+    d.line = clean(p.line, 110) || hookLine(d, opts.hook != null ? opts.hook : state.hook);
     return d;
   }
+  /* 한 줄 소개가 비어 있을 때 넣는 문구. '문구 바꾸기'로 돌려 가며 고른다 */
+  var HOOKS_KW = [
+    function (d) { return '2027 교실 스포일러\n' + d.kw; },
+    function (d) { return d.kwNo ? '키워드 21개 중\n' + d.kwNo + '번, ' + d.kw : ''; },
+    function (d) { return '이 책에서\n' + d.kw + ' 담당'; },
+    function (d) { return '내년 교실 미리 보기\n' + d.kw; }
+  ];
+  var HOOKS_BOOK = ['2027 교실 스포일러', '현장 교육전문가 30명이 고른\n2027 키워드 21', '내년 교실,\n미리 보기', '네 번째 책이 나왔어요'];
+  function hookList(d) { return d.kw ? HOOKS_KW.map(function (f) { return f(d); }).filter(Boolean) : HOOKS_BOOK; }
+  function hookLine(d, i) { var l = hookList(d); return l[((i | 0) % l.length + l.length) % l.length]; }
   function geomOf(r) {
     var W = r.w, H = r.h, S = Math.min(W, H), m = Math.round(S * 0.07);
     var g = { id: r.id, W: W, H: H, S: S, m: m, top: m, bot: m, land: W / H > 1.3, story: r.id === '9x16', kbg: r.id === 'kakaobg', pf: r.id === 'profile' };
@@ -168,7 +182,7 @@
     '고교학점제와 대입 개편': [['고교학점제와 대입 개편'], ['고교학점제와', '대입 개편']]
   };
   // 문장 속에서도 떨어지면 어색한 말 묶음 (긴 것부터)
-  var GLUE = ['대한민국 미래 교육 트렌드', '미래 교육 트렌드가', '미래 교육 트렌드', '제가 썼어요', '바이브 코딩과', '교육의 정당성', '디자인 씽킹', '생성형 AI와', 'AI 시대의', '미래 교육', '수업 설계', '대입 개편', 'AI 스마트', '고1 자퇴', '슬로 리딩', 'AI 시대', 'AI 교육', '네 번째', '뉴 커먼'];
+  var GLUE = ['대한민국 미래 교육 트렌드', '미래 교육 트렌드가', '미래 교육 트렌드', '현장 교육전문가 30명이', '2027 교실 스포일러', '내년 교실 미리 보기', '키워드 21개 중', '2027 키워드 21', '미리 보기', '이 책에서', '바이브 코딩과', '교육의 정당성', '디자인 씽킹', '생성형 AI와', 'AI 시대의', '미래 교육', '수업 설계', '대입 개편', 'AI 스마트', '고1 자퇴', '슬로 리딩', 'AI 시대', 'AI 교육', '네 번째', '뉴 커먼'];
   function glueWords(text) {
     var t = String(text);
     GLUE.forEach(function (ph) { if (t.indexOf(ph) > -1) t = t.split(ph).join(ph.replace(/ /g, '\uE000')); });
@@ -648,7 +662,56 @@
     }
   }
 
-  var DRAW = { cover: tCover, art: tArt, quote: tQuote, shelf: tShelf };
+  /* 키워드 빙고: 5×5 — 표지 키워드 21개 + 네 귀퉁이 별. 스토리에 올려 '아는 키워드에 동그라미'를 받는다 */
+  function tBingo(c, g, d) {
+    if (g.pf) return pfCover(c, g);
+    var W = g.W, H = g.H, S = g.S, m = g.m, K = (window.EDU_ASSETS && EDU_ASSETS.keywords) || [], i;
+    rect(c, 0, 0, W, H, CY);
+    var top = g.top, bot = H - g.bot, fl = flow(c, authorSegs(d, 'cy'), W - 2 * m, S * 0.03 * g.ts, { maxLines: 1, min: 0.7 });
+    var tx, ty, tw0, gx, gy, gs;                       // title box / grid box
+    if (g.land) {
+      gs = Math.min(bot - top, W * 0.5); gx = W - m - gs; gy = top + (bot - top - gs) / 2; tx = m; tw0 = gx - m * 1.6 - m; ty = gy;
+    } else {
+      gs = W - 2 * m; tx = m; tw0 = W - 2 * m;
+      var headH = S * 0.215, footH = fl.h + S * 0.04, free = bot - top - headH - footH;
+      gs = Math.min(gs, free); gx = (W - gs) / 2; ty = top + Math.max(0, (free - gs) * 0.4); gy = ty + headH;
+    }
+    // 제목
+    var bb = braceBlock(c, tx, ty, [TITLE], S * 0.03 * g.ts, INK, tw0, 'left');
+    var hs = Math.min(S * 0.1, tw0 / 5.4), hy = ty + bb.h + S * 0.022;
+    draw(c, '키워드 ', tx, hy + hs * 0.77, { w: 700, s: hs, ls: -0.04, c: INK });
+    var w1 = tw(c, '키워드 ', { w: 700, s: hs, ls: -0.04 });
+    draw(c, '빙고', tx + w1, hy + hs * 0.77, { w: 700, s: hs, ls: -0.04, c: WH });
+    var w2 = tw(c, '빙고', { w: 700, s: hs, ls: -0.04 });
+    sparkle(c, tx + w1 + w2 + hs * 0.5, hy + hs * 0.36, hs * 0.3, INK);
+    var subS = S * 0.03 * g.ts, sub = ['아는 키워드에 동그라미.', '몇 줄 나왔나요?'];
+    if (g.land) for (i = 0; i < sub.length; i++) draw(c, sub[i], tx, hy + hs + S * 0.05 + i * subS * 1.5 + subS * 0.77, { w: 600, s: subS, f: 'b', c: INK });
+    else {                                             // 제목 오른쪽에 두 줄로
+      var room = tw0 - w1 - w2 - hs * 1.1, ss = Math.min(subS * 1.05, room / 11.6);
+      for (i = 0; i < sub.length; i++) draw(c, sub[i], W - m, hy + hs * 0.5 - ss * 1.45 + i * ss * 1.45 + ss * 0.77 + ss * 0.35, { w: 600, s: ss, f: 'b', c: INK, a: 'right' });
+    }
+    // 판
+    var gap = gs * 0.014, cell = (gs - 4 * gap) / 5, corner = { 0: 1, 4: 1, 20: 1, 24: 1 }, names = [], k = 0, fits = [], size = cell * 0.17;
+    for (i = 0; i < 25; i++) names.push(corner[i] ? null : (K[k++] || { name: '' }));
+    names.forEach(function (n, idx) {
+      if (!n) { fits.push(null); return; }
+      var f = fitHeadline(c, n.name, { maxW: cell * 0.86, maxH: cell * 0.74, maxLines: 3, sizeMax: cell * 0.17, lh: 1.22, ls: -0.04 });
+      fits.push(f); size = Math.min(size, f.size);
+    });
+    for (i = 0; i < 25; i++) {
+      var cx = gx + (i % 5) * (cell + gap), cy = gy + Math.floor(i / 5) * (cell + gap), n = names[i], mine = n && d.kwId && n.id === d.kwId;
+      roundRect(c, cx, cy, cell, cell, cell * 0.07); c.fillStyle = n ? (mine ? INK : WH) : '#0090BC'; c.fill();
+      if (!n) { sparkle(c, cx + cell / 2, cy + cell / 2, cell * 0.24, i === 0 || i === 24 ? WH : INK); continue; }
+      var f = fits[i], lines = f.lines.map(function (L) { return L.segs[0].t; }), lh = size * 1.22, th = (lines.length - 1) * lh + size * 0.88, j;
+      for (j = 0; j < lines.length; j++) draw(c, lines[j], cx + cell / 2, cy + (cell - th) / 2 + j * lh + size * 0.77, { w: 700, s: size, ls: -0.04, c: mine ? WH : INK, a: 'center' });
+      if (mine) sparkle(c, cx + cell * 0.86, cy + cell * 0.14, cell * 0.075, CY);
+    }
+    // 이름
+    if (g.land) { var fl2 = flow(c, authorSegs(d, 'cy'), tw0, S * 0.032 * g.ts, { maxLines: 2, min: 0.7 }); drawFlow(c, fl2, tx, gy + gs - fl2.h, 'left'); }
+    else drawFlow(c, fl, W / 2, gy + gs + S * 0.04, 'center');
+  }
+
+  var DRAW = { cover: tCover, art: tArt, quote: tQuote, shelf: tShelf, bingo: tBingo };
 
   /* ---------- render / export ---------- */
   function render(opts) {
@@ -712,6 +775,7 @@
         '<div class="st-stage">' +
           '<div class="st-frame"><canvas class="st-canvas" role="img" aria-label="홍보 카드 미리보기"></canvas></div>' +
           '<button type="button" class="st-pill" data-act="me" hidden>' + icon('pen') + '<span></span></button>' +
+          '<button type="button" class="st-hook" data-act="hook" hidden>' + icon('shuffle') + '문구 바꾸기</button>' +
           '<div class="seg st-mask" role="group" aria-label="프로필 사진 잘림 미리보기" hidden>' + MASKS.map(function (m) { return '<button type="button" data-mask="' + m[0] + '">' + m[1] + '</button>'; }).join('') + '</div>' +
           '<span class="st-dim" aria-hidden="true"></span>' +
         '</div>' +
@@ -756,6 +820,7 @@
       if (v === 'me') U.goTo('me');
       else if (v === 'save') onSave(b);
       else if (v === 'all') openAll();
+      else if (v === 'hook') { state.hook = (state.hook + 1) % 12; save(); schedule(); }
     }
   }
   function sync() {
@@ -773,6 +838,7 @@
     var pill = $('.st-pill', root), msg = '';
     if (!pf) msg = !clean(p.name) ? '이름을 넣으면 카드에 들어가요' : !EDU.currentKeyword(p) ? '키워드를 고르면 카드에 들어가요' : '';
     pill.hidden = !msg; $('span', pill).textContent = msg;
+    $('.st-hook', root).hidden = !(state.template === 'quote' && !pf && !clean(p.line));
     $('.st-dim', root).textContent = r.w + ' × ' + r.h + ' · ' + (t.type === 'image/png' ? 'PNG' : 'JPG');
     canvas.setAttribute('aria-label', '홍보 카드 미리보기: ' + t.name + ', ' + r.name);
   }
