@@ -49,53 +49,6 @@ window.EDU_MOTIONLAB = {
    ]
   },
   {
-   "id": "lab-numbers",
-   "title": "숫자 30명 · 21개",
-   "secs": 4.6,
-   "motion": "stg-fact-deck",
-   "files": [
-    {
-     "size": "16x9",
-     "label": "16:9 블로그",
-     "poster": "assets/motion/lab/lab-numbers-16x9.jpg",
-     "gif": "assets/motion/lab/lab-numbers-16x9.gif",
-     "mp4": "assets/motion/lab/lab-numbers-16x9.mp4",
-     "gw": 1200,
-     "gh": 675,
-     "vw": 1920,
-     "vh": 1080,
-     "gifBytes": 935757,
-     "mp4Bytes": 251545
-    },
-    {
-     "size": "1x1",
-     "label": "1:1",
-     "poster": "assets/motion/lab/lab-numbers-1x1.jpg",
-     "gif": "assets/motion/lab/lab-numbers-1x1.gif",
-     "mp4": "assets/motion/lab/lab-numbers-1x1.mp4",
-     "gw": 1080,
-     "gh": 1080,
-     "vw": 1080,
-     "vh": 1080,
-     "gifBytes": 1733111,
-     "mp4Bytes": 248828
-    },
-    {
-     "size": "4x5",
-     "label": "4:5 피드",
-     "poster": "assets/motion/lab/lab-numbers-4x5.jpg",
-     "gif": "assets/motion/lab/lab-numbers-4x5.gif",
-     "mp4": "assets/motion/lab/lab-numbers-4x5.mp4",
-     "gw": 1080,
-     "gh": 1350,
-     "vw": 1080,
-     "vh": 1350,
-     "gifBytes": 1902339,
-     "mp4Bytes": 285325
-    }
-   ]
-  },
-  {
    "id": "lab-series",
    "title": "시리즈 네 권 표지",
    "secs": 6,
@@ -301,7 +254,6 @@ window.EDU_MOTIONLAB = {
  ],
  "used": [
   "list-roll",
-  "stg-fact-deck",
   "album-turn",
   "bro-qr-scan",
   "cn-tag-list",
