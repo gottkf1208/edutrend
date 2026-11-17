@@ -62,23 +62,25 @@
     // ----- 움직이는 홍보물 (GIF + MP4) -----
     // 목록 파일 셋을 차례로 싣는다: 통통 튀는 책(js/motion-book.js) → 모션랩 장면(js/motionlab-data.js) → 표지 문법 모션(js/motion-data.js)
     var MS = [window.EDU_MOTION_BOOK, window.EDU_MOTIONLAB, window.EDU_MOTION].filter(Boolean), seenV = {};
-    // 완성 영상(릴스·피드 영상)은 맨 앞에
+    // 직접 렌더한 '통통 튀는 책'을 맨 앞에, 그다음 완성 영상(릴스·피드 영상)
+    if (window.EDU_MOTION_BOOK) (window.EDU_MOTION_BOOK.items || []).forEach(addMotion);
     MS.forEach(function (M) { (M.videos || []).forEach(function (m) {
       if (seenV[m.id]) return; seenV[m.id] = 1;
-      add({ id: 'md-' + m.id, cat: 'motion', title: m.title, sub: m.sub || '영상', kind: 'video', fit: 'contain', v: [{ size: 'mv', label: '원본', pv: m.poster || '', md: m.src, hd: m.src, w: m.w, h: m.h, bytes: m.bytes, filename: m.filename }] });
+      add({ id: 'md-' + m.id, cat: 'motion', title: m.title, sub: m.sub || '영상', kind: 'video', fit: 'contain', v: [{ size: 'mv', label: '원본', pv: m.poster || '', md: m.preview || m.src, hd: m.src, w: m.w, h: m.h, bytes: m.bytes, filename: m.filename }] });
     }); });
     // 캐러셀 낱장(정지 그림)은 출간 포스터 칸에
     MS.forEach(function (M) { (M.cards || []).forEach(function (m) {
       single('cd-' + m.id, 'launch', m.title, '캐러셀 낱장', { size: 'cd', label: '원본', pv: m.poster || m.src, md: m.poster || m.src, hd: m.src, w: m.w, h: m.h, bytes: m.bytes, filename: m.filename }, { fit: 'contain' });
     }); });
-    MS.forEach(function (M) { (M.items || []).forEach(function (m) {
+    MS.forEach(function (M) { if (M !== window.EDU_MOTION_BOOK) (M.items || []).forEach(addMotion); });
+    function addMotion(m) {
       var order = ['4x5', '1x1', '16x9', '9x16'], kw = m.kw ? A.keywords.filter(function (x) { return x.id === m.kw; })[0] : null;
       var files = (m.files || []).slice().sort(function (x, y) { return order.indexOf(x.size) - order.indexOf(y.size); });
       if (m.kw) files.sort(function (x, y) { return (x.size === '1x1' ? 0 : 1) - (y.size === '1x1' ? 0 : 1); });
       var base = fname('움직이는', kw ? kw.tag : m.title.replace(/\s+/g, ''));
       add({ id: 'mv-' + m.id, cat: 'motion', title: m.title, sub: (m.secs ? m.secs + '초 · ' : '') + 'GIF · MP4', kind: 'motion', kw: m.kw || null, fit: 'contain',
         v: files.map(function (f) { var lb = f.label || f.size; return { size: f.size, label: lb, pv: f.poster, md: f.gif, hd: f.gif, mp4: f.mp4, w: f.gw, h: f.gh, vw: f.vw, vh: f.vh, bytes: f.gifBytes, mp4Bytes: f.mp4Bytes, filename: base + '_' + lb.replace(/[\s:]+/g, '') + '.gif', mp4name: base + '_' + lb.replace(/[\s:]+/g, '') + '.mp4' }; }) });
-    }); });
+    }
     // 완성 영상(릴스 등)은 EDU.media에 한 줄씩: { id, title, sub, src(mp4), poster, w, h, bytes, filename }
     EDU.media.forEach(function (m) {
       add({ id: 'md-' + m.id, cat: 'motion', title: m.title, sub: m.sub || '영상', kind: 'video', fit: 'contain', v: [{ size: 'mv', label: '원본', pv: m.poster || '', md: m.src, hd: m.src, w: m.w, h: m.h, bytes: m.bytes, filename: m.filename }] });
@@ -236,7 +238,7 @@
       var canCard = !!EDU.studio && (it.template || it.kw) && it.cat !== 'art' && it.cat !== 'cover' && !it.ground && it.kind !== 'motion' && it.kind !== 'video';
       $('#libDetail', d).innerHTML =
         '<div class="lib-stage' + (it.checker ? ' is-checker' : '') + (it.ground ? ' is-ground' : '') + '">' +
-          (it.kind === 'video' ? '<video src="' + esc(v.hd) + '" poster="' + esc(v.pv || '') + '" controls playsinline loop autoplay muted></video>'
+          (it.kind === 'video' ? '<video src="' + esc(v.md || v.hd) + '" poster="' + esc(v.pv || '') + '" controls playsinline loop autoplay muted></video>'
             : '<img src="' + esc(v.md || v.pv) + '" alt="' + esc(it.title) + '">') +
           (list.length > 1 ? '<button type="button" class="lib-nav lib-prev" data-step="-1" aria-label="이전">' + icon('chev-right') + '</button><button type="button" class="lib-nav lib-next" data-step="1" aria-label="다음">' + icon('chev-right') + '</button>' : '') +
         '</div>' +
