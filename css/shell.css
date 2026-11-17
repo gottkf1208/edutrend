@@ -78,8 +78,15 @@
   .sh-mebody{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,1fr);grid-template-rows:auto 1fr;gap:16px 28px;align-content:start;padding-top:8px}
   .sh-form{grid-column:1;grid-row:1 / span 2;flex:none;align-self:start;padding:22px 24px 12px;gap:16px}
   .sh-steps2{display:none}
-  .sh-fields{overflow:visible;display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;margin:0;padding:0}
-  .sh-step{display:flex;gap:16px}
+  .sh-fields{overflow:visible;display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;grid-auto-rows:1fr;align-items:start;margin:0;padding:0}
+  /* 두 묶음을 같은 줄에 맞춘다: 왼쪽·오른쪽 칸이 같은 행에서 시작(안내 글이 붙어도 아래 칸이 어긋나지 않게) */
+  .sh-step,.sh-step.is-on{display:contents}
+  .sh-step[data-pane="1"]>.field{grid-column:1}
+  .sh-step[data-pane="2"]>.field{grid-column:2}
+  .sh-step>.field:nth-child(1){grid-row:1}
+  .sh-step>.field:nth-child(2){grid-row:2}
+  .sh-step>.field:nth-child(3){grid-row:3}
+  .sh-step>.field:nth-child(4){grid-row:4}
   .sh-tagcard{grid-column:2;grid-row:1}
   .sh-tagtop{padding:20px 22px 24px}
   .sh-tagkw{font-size:34px;margin-top:12px}
