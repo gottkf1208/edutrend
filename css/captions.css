@@ -1,0 +1,188 @@
+@charset "UTF-8";
+/* 글감 뷰 — 올릴 글 · 해시태그 · AI 프롬프트 (prefix cp- / pr-)
+   한 화면: 고정 줄(탭 · 칩 · 태그 · 버튼) + 늘어나는 글 상자 하나. 페이지는 스크롤하지 않는다. */
+
+.cp-root{height:100%;min-height:0;width:100%;max-width:calc(var(--max) + var(--pad) * 2);margin:0 auto;display:flex;flex-direction:column;gap:8px;padding:10px var(--pad) 12px}
+
+/* ---------- 맨 윗줄: 탭 + 이모지 ---------- */
+.cp-top{flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:42px}
+.cp-tabs button{min-height:36px;padding:6px 12px;white-space:nowrap}
+.cp-emoji{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+.cp-emoji .seg button{min-height:32px;padding:4px 10px;font-size:12.5px}
+.cp-tabs button,.cp-emoji .seg button,.cp-chip,.cp-tag{position:relative}
+.cp-tabs button::after,.cp-emoji .seg button::after,.cp-chip::after{content:"";position:absolute;inset:-5px -1px}   /* 손가락 닿는 자리는 44px 넘게 */
+
+.cp-pane{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+
+/* ---------- 올릴 곳 · 분위기 ---------- */
+.cp-side{flex:none;display:flex;flex-direction:column;gap:6px;min-width:0}
+.cp-pick{min-width:0}
+.cp-label{display:none}
+.cp-chips.scroller{padding-top:1px;padding-bottom:1px;scroll-padding:0 var(--pad)}
+.cp-chip{min-height:38px;padding:7px 13px}
+.cp-tagpanel{display:none}
+
+/* ---------- 글 상자 ---------- */
+.cp-main{flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;gap:8px}
+.cp-box{flex:1;min-height:0;display:flex;flex-direction:column;position:relative}
+.cp-box .copybox-head{flex:none;min-height:44px;padding:4px 4px 4px 14px}
+.cp-count{white-space:nowrap;font-weight:600}
+.cp-count b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.cp-count i{font-style:normal;font-weight:500;color:var(--faint);margin-left:6px}
+.cp-count.is-over b{color:var(--warn)}
+.cp-shuffle{color:var(--ink)}
+.cp-shuffle b{font-weight:600;color:var(--faint);font-variant-numeric:tabular-nums}
+.cp-note{flex:none;padding:7px 14px;font-size:12px;line-height:1.5;color:var(--muted);background:#FAFAFB;border-bottom:1px solid var(--line)}
+.cp-note.is-warn{color:var(--warn);background:#FFF7EC}
+.cp-box textarea.cp-text{flex:1;min-height:0;resize:none;padding:12px 14px;line-height:1.7;overflow-y:auto;border-radius:0;overscroll-behavior:contain}
+.cp-hint{flex:none;display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:6px 12px;background:var(--cy-wash);border-top:1px solid #CDEBF5;color:var(--cy-ink);font-size:12.5px;font-weight:650;white-space:nowrap;position:relative}
+.cp-hint:hover{background:#D9F1F9}
+.cp-hint:focus-visible{outline-offset:-3px}
+.cp-hint .i{width:14px;height:14px}
+.cp-hint::after{content:"";position:absolute;inset:-4px 0 0}
+
+/* ---------- 해시태그 한 줄 요약 ---------- */
+.cp-tagrow{flex:none;display:flex;align-items:center;gap:8px;min-height:44px;min-width:0;padding:0 4px 0 12px;background:#fff;border:1px solid var(--line);border-radius:var(--r-m);text-align:left;transition:border-color .15s}
+.cp-tagrow:hover{border-color:var(--line-2)}
+.cp-tagico{flex:none;display:flex;color:var(--cy-ink)}
+.cp-tagn{flex:none;font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
+.cp-tagprev{flex:1;min-width:0;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-tagpick{flex:none;display:inline-flex;align-items:center;gap:1px;padding:6px 4px 6px 8px;font-size:12.5px;font-weight:650;color:var(--ink)}
+.cp-tagpick .i{width:15px;height:15px;color:var(--faint)}
+
+/* ---------- 버튼 두 줄 ---------- */
+.cp-actions{flex:none;display:flex;flex-direction:column;gap:6px}
+.cp-go{min-height:48px;font-size:15px}
+.cp-copy3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.cp-copy3 .btn{min-height:40px;padding:6px 4px}
+
+/* ---------- 해시태그 묶음 (시트와 데스크톱 왼쪽 단이 같이 쓴다) ---------- */
+.cp-groups{display:flex;flex-direction:column;gap:14px}
+.cp-group{display:flex;flex-direction:column;gap:7px;min-width:0}
+.cp-gname{font-size:12px;font-weight:700;color:var(--ink)}
+.cp-gchips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
+.cp-tag{min-height:38px;padding:6px 11px;font-size:13px;color:var(--muted);max-width:100%}
+.cp-tag[aria-pressed="true"]{background:var(--cy-wash);border-color:var(--cy);color:var(--cy-ink)}
+.cp-tag[aria-pressed="true"]:hover{border-color:var(--cy-deep)}
+.cp-add{flex:1 1 210px;display:flex;gap:6px;min-width:0}
+.cp-add .cp-addin{flex:1;min-width:0;min-height:40px;padding:8px 11px}
+.cp-add .btn{min-height:40px}
+.cp-empty{min-height:38px;padding:6px 12px;border-radius:999px;border:1px dashed var(--line-2);font-size:12.5px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.cp-empty:hover{border-color:var(--ink);color:var(--ink)}
+.cp-empty .i{width:14px;height:14px}
+.cp-reset{display:inline-flex;align-items:center;gap:5px;min-height:40px;padding:0 6px;border-radius:7px;font-size:12.5px;font-weight:650;color:var(--muted)}
+.cp-reset:hover{color:var(--ink);background:#00000008}
+.cp-reset .i{width:15px;height:15px}
+
+/* ---------- 해시태그 시트 ---------- */
+dialog.cp-tagsheet[open]{display:flex;flex-direction:column}
+.cp-tagsheet .dlg-top{flex:none}
+.cp-sheet{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding:12px 18px 14px}
+.cp-sheet>.note{flex:none}
+.cp-sheet .cp-groups{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:2px 2px 4px}
+.cp-sheetfoot{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px;border-top:1px solid var(--line)}
+.cp-sheetfoot .btn{min-width:150px}
+
+/* ================= AI 프롬프트 ================= */
+.pr-side{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.pr-lead{flex:none;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.pr-list{flex:1 1 auto;min-height:0;max-height:calc(72px * 8 + 2px);overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:var(--r-m)}
+.pr-row{flex:1 0 56px;max-height:72px;display:flex;align-items:center;gap:12px;min-width:0;padding:6px 8px 6px 12px;text-align:left;border-bottom:1px solid var(--line);transition:background .15s}
+.pr-row:last-child{border-bottom:0}
+.pr-row:hover{background:#FAFAFB}
+.pr-row:focus-visible{outline-offset:-3px}
+.pr-ico{flex:none;width:36px;height:36px;border-radius:9px;background:var(--canvas);color:var(--ink);display:flex;align-items:center;justify-content:center}
+.pr-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.35}
+.pr-txt strong{font-size:14.5px;font-weight:650;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-txt small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-chev{flex:none;width:16px;height:16px;color:var(--faint)}
+.pr-detail{display:none}
+
+.pr-body{flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;gap:12px}
+.pr-head{flex:none;display:flex;align-items:center;gap:12px;min-width:0}
+.pr-head h3{font:700 18px/1.3 var(--display);letter-spacing:-.035em;color:var(--ink)}
+.pr-head p{font-size:12.5px;color:var(--muted);margin-top:1px}
+.pr-box{flex:1;min-height:0;display:flex;flex-direction:column}
+.pr-box .copybox-head{flex:none;min-height:38px;padding:8px 14px;font-weight:600}
+.pr-len{flex:none;color:var(--faint);font-weight:500;font-variant-numeric:tabular-nums}
+.pr-text{flex:1;min-height:0;margin:0;overflow:auto;overscroll-behavior:contain;font-family:var(--body);font-size:13.5px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.pr-text:focus-visible{outline-offset:-3px}
+.pr-actions{flex:none;display:flex;flex-direction:column;gap:6px}
+.pr-actions>.btn{min-height:48px;font-size:15px}
+.pr-open3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pr-open3[data-n="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pr-open3 .btn{min-height:42px;padding:5px 4px;white-space:normal;line-height:1.25;font-size:12.5px}
+
+dialog.pr-sheet[open]{display:flex;flex-direction:column}
+.pr-sheet .dlg-top{flex:none}
+.pr-sheet .pr-body{padding:14px 18px 16px}
+.pr-sheet .pr-head h3{font-size:17px}
+
+/* ---------- 낮은 화면(작은 폰): 안내 줄을 접어 글 상자를 지킨다 ---------- */
+@media(max-height:700px){
+  .cp-root{gap:6px;padding-top:8px;padding-bottom:10px}
+  .cp-pane,.cp-main{gap:6px}
+  .cp-note:not(.is-warn){display:none}
+  .cp-go{min-height:46px}
+  .cp-hint{min-height:36px}
+  .pr-lead{display:none}
+}
+@media(max-width:374px){
+  .cp-tabs button{padding:6px 10px}
+  .cp-emoji .seg button{padding:4px 8px}
+  .cp-emoji{gap:5px}
+}
+
+/* ================= 데스크톱: 두 단 ================= */
+@media(min-width:900px){
+  .cp-root{gap:14px;padding:16px var(--pad) 18px}
+  .cp-top{min-height:44px}
+  .cp-tabs button{min-height:38px;padding:7px 16px;font-size:13.5px}
+  .cp-cap,.pr-pane{flex-direction:row;gap:28px}
+
+  .cp-side{flex:none;width:min(440px,38%);gap:14px;min-height:0;overflow:hidden}
+  .cp-pick{display:flex;flex-direction:column;gap:7px}
+  .cp-label{display:block;font:500 11px/1.2 var(--display);letter-spacing:.1em;color:var(--faint)}
+  .cp-label b{font-family:var(--body);font-weight:650;letter-spacing:0;color:var(--cy-ink);margin-left:4px}
+  .cp-chips.scroller{flex-wrap:wrap;overflow:visible;margin:0;padding:0;gap:5px}
+  .cp-chip{min-height:32px;padding:5px 11px;font-size:12.5px}
+  .cp-chip::after,.cp-tabs button::after,.cp-emoji .seg button::after{display:none}
+
+  .cp-tagpanel{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:10px}
+  .cp-taghead{flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .cp-tagpanel .cp-reset{min-height:30px;font-size:12px}
+  .cp-tagpanel .cp-groups{flex:1;min-height:0;overflow-y:auto;gap:8px;padding:1px}
+  .cp-tagpanel .cp-group{flex-direction:row;align-items:flex-start;gap:8px}
+  .cp-tagpanel .cp-gname{flex:none;width:56px;padding-top:7px;font-size:11.5px;font-weight:650;color:var(--muted)}
+  .cp-tagpanel .cp-gchips{flex:1;gap:5px}
+  .cp-tagpanel .cp-tag,.cp-tagpanel .cp-empty{min-height:30px;padding:4px 9px;font-size:12px}
+  .cp-tagpanel .cp-add .cp-addin{min-height:34px;padding:5px 10px;font-size:14px}
+  .cp-tagpanel .cp-add .btn{min-height:34px}
+
+  .cp-main{gap:10px}
+  .cp-tagrow{display:none}
+  .cp-box .copybox-head{min-height:46px;padding:5px 6px 5px 16px;font-size:12.5px}
+  .cp-box textarea.cp-text{padding:16px 18px;line-height:1.8}
+  .cp-note{padding:8px 16px;font-size:12.5px}
+  .cp-actions{flex-direction:row;gap:8px}
+  .cp-go{flex:1.25;min-width:0;min-height:46px}
+  .cp-copy3{flex:1;gap:6px}
+  .cp-copy3 .btn{min-height:46px;font-size:13px}
+
+  .pr-side{flex:none;width:min(440px,38%)}
+  .pr-lead{font-size:13px}
+  .pr-row[aria-current="true"]{background:var(--cy-wash)}
+  .pr-row[aria-current="true"] .pr-ico{background:#fff;color:var(--cy-ink)}
+  .pr-row[aria-current="true"] .pr-chev{color:var(--cy-ink)}
+  .pr-detail{display:flex;flex:1;min-width:0;min-height:0}
+  .pr-detail .pr-head h3{font-size:20px}
+  .pr-detail .pr-head .pr-ico{background:#fff;border:1px solid var(--line)}
+  .pr-detail .pr-text{font-size:14px;padding:16px 18px}
+  .pr-detail .pr-actions{flex-direction:row;gap:8px}
+  .pr-detail .pr-actions>.btn{flex:1;min-height:46px}
+  .pr-detail .pr-open3{flex:1.5}
+  .pr-detail .pr-open3 .btn{min-height:46px;font-size:13px}
+}
+@media(min-width:900px) and (max-height:760px){
+  .cp-side{gap:10px}
+}
