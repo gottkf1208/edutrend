@@ -23,14 +23,13 @@
         return '<a href="#' + t[0] + '" data-go="' + t[0] + '" data-tab="' + t[0] + '">' + t[2] + '</a>';
       }).join('') + '</nav>' +
       '<div class="sh-actions">' +
-        '<button type="button" class="icon-btn sh-linkbtn" data-go="links" data-tab="links" aria-label="링크 모음">' + icon('link') + '</button>' +
         '<button type="button" class="icon-btn sh-help" id="helpBtn" aria-label="처음이라면">' + icon('help') + '</button>' +
         '<button type="button" class="btn btn-dark btn-small sh-cover" id="coverBtn">' + icon('download') + '<span>표지 받기</span></button>' +
       '</div>';
     $('#helpBtn').addEventListener('click', help);
     $('#coverBtn').addEventListener('click', coverSave);
 
-    $('#dock').innerHTML = TABS.map(function (t) {
+    $('#dock').innerHTML = TABS.concat([['links', 'link', '링크']]).map(function (t) {
       return '<a href="#' + t[0] + '" data-go="' + t[0] + '" data-tab="' + t[0] + '">' + icon(t[1]) + '<span>' + t[2] + '</span></a>';
     }).join('');
 
