@@ -56,7 +56,7 @@
     single('cv-flat', 'cover', '평면 표지', 'JPG', { size: 'cv', label: '원본', pv: 'assets/covers/2027.webp', md: 'assets/covers/2027.webp', hd: 'assets/covers/2027.jpg', w: c['2027'].w, h: c['2027'].h, bytes: c['2027'].bytes, filename: fname('표지') + '.jpg' }, { fit: 'contain' });
     // ----- 움직이는 홍보물 (GIF + MP4) -----
     // 목록 파일 셋을 차례로 싣는다: 통통 튀는 책(js/motion-book.js) → 모션랩 장면(js/motionlab-data.js) → 표지 문법 모션(js/motion-data.js)
-    var MS = [window.EDU_MOTION_BOOK, window.EDU_MOTIONLAB, window.EDU_MOTIONLAB2, window.EDU_MOTIONLAB3, window.EDU_MOTION].filter(Boolean), seenV = {};
+    var MS = [window.EDU_MOTION_BOOK, window.EDU_MOTIONLAB2, window.EDU_MOTIONLAB3, window.EDU_MOTIONLAB, window.EDU_MOTION].filter(Boolean), seenV = {};
     // 직접 렌더한 '통통 튀는 책'을 맨 앞에, 그다음 완성 영상(릴스·피드 영상)
     if (window.EDU_MOTION_BOOK) (window.EDU_MOTION_BOOK.items || []).forEach(addMotion);
     MS.forEach(function (M) { (M.videos || []).forEach(function (m) {
