@@ -59,65 +59,6 @@ window.EDU_MOTION_BOOK = {
      "mp4Bytes": 5071534
     }
    ]
-  },
-  {
-   "id": "kw-cards",
-   "title": "키워드 카드 넘기기",
-   "secs": 14.7,
-   "files": [
-    {
-     "size": "4x5",
-     "label": "4:5 피드",
-     "poster": "assets/motion/cards/kw-cards-4x5.jpg",
-     "gif": "assets/motion/cards/kw-cards-4x5.gif",
-     "mp4": "assets/motion/cards/kw-cards-4x5.mp4",
-     "gw": 864,
-     "gh": 1080,
-     "vw": 1080,
-     "vh": 1350,
-     "gifBytes": 5717710,
-     "mp4Bytes": 3526101
-    },
-    {
-     "size": "1x1",
-     "label": "1:1",
-     "poster": "assets/motion/cards/kw-cards-1x1.jpg",
-     "gif": "assets/motion/cards/kw-cards-1x1.gif",
-     "mp4": "assets/motion/cards/kw-cards-1x1.mp4",
-     "gw": 1080,
-     "gh": 1080,
-     "vw": 1080,
-     "vh": 1080,
-     "gifBytes": 5417539,
-     "mp4Bytes": 2803929
-    },
-    {
-     "size": "9x16",
-     "label": "9:16 릴스",
-     "poster": "assets/motion/cards/kw-cards-9x16.jpg",
-     "gif": "assets/motion/cards/kw-cards-9x16.gif",
-     "mp4": "assets/motion/cards/kw-cards-9x16.mp4",
-     "gw": 720,
-     "gh": 1280,
-     "vw": 1080,
-     "vh": 1920,
-     "gifBytes": 5190446,
-     "mp4Bytes": 4252213
-    },
-    {
-     "size": "16x9",
-     "label": "16:9 블로그",
-     "poster": "assets/motion/cards/kw-cards-16x9.jpg",
-     "gif": "assets/motion/cards/kw-cards-16x9.gif",
-     "mp4": "assets/motion/cards/kw-cards-16x9.mp4",
-     "gw": 1200,
-     "gh": 675,
-     "vw": 1920,
-     "vh": 1080,
-     "gifBytes": 3013877,
-     "mp4Bytes": 2856902
-    }
-   ]
   }
  ],
  "videos": [
