@@ -89,8 +89,10 @@
   function count(c) { return items.filter(function (i) { return i.cat === c; }).length; }
   function kwId() { var k = EDU.currentKeyword(); return k && k.id !== 'custom' ? k.id : null; }
   /* 키워드마다 다른 자료(포스터·프사·영상·그림 원본)는 고른 키워드 것만 보여 준다. 키워드 포스터·그림 원본은 '내 키워드' 칸에 모음 */
-  function cats() {   // 자주 쓰는 것부터: 움직이는 홍보물 → 프사·배경 → 출간 포스터 → 내 키워드 → 표지
-    var list = [{ id: 'motion', name: '움직이는 홍보물', n: inCat('motion').length }];
+  function cats() {   // 자주 쓰는 것부터: 북트레일러 → 움직이는 홍보물 → 프사·배경 → 출간 포스터 → 내 키워드 → 표지
+    var list = [];
+    if (window.EDU_TRAILER) list.push({ id: 'trailer', name: '북트레일러', n: 0 });
+    list.push({ id: 'motion', name: '움직이는 홍보물', n: inCat('motion').length });
     [['profile', '프사 · 배경'], ['launch', '출간 포스터']].forEach(function (c) {
       var n = inCat(c[0]).length; if (n) list.push({ id: c[0], name: c[1], n: n });
     });
@@ -133,7 +135,9 @@
     $('#libGrid').addEventListener('click', function (e) {
       var b = e.target.closest('[data-item]'); if (b) return detail(b.getAttribute('data-item'));
       var g = e.target.closest('[data-egg]'); if (g) window.dispatchEvent(new CustomEvent('edu:egg', { detail: g.getAttribute('data-egg') }));
-      var a = e.target.closest('[data-act]'); if (a) U.goTo(a.getAttribute('data-act') === 'studio' ? 'studio' : 'kwIndex');
+      var a = e.target.closest('[data-act]');
+      if (a && a.getAttribute('data-act') === 'trailer-save') saveTrailer();
+      else if (a) U.goTo(a.getAttribute('data-act') === 'studio' ? 'studio' : 'kwIndex');
     });
     $('#libPager').addEventListener('click', function (e) { var b = e.target.closest('[data-page]'); if (b && !b.disabled) turn(+b.getAttribute('data-page')); });
     $('#libBar').addEventListener('click', function (e) {
@@ -173,6 +177,33 @@
     return best;
   }
 
+  /* 북트레일러: 한 편만 크게. 화면에서는 가벼운 미리보기로 틀고, 저장 버튼은 원본(1080×1920)을 내려 준다 */
+  function paintTrailer(bar, grid, pager) {
+    var T = window.EDU_TRAILER;
+    bar.innerHTML = '<p>인스타 릴스에 그대로 올릴 수 있는 9:16 영상이에요</p>';
+    pager.innerHTML = ''; state.pages = 1;
+    if (grid.querySelector('.lt')) return;   // 이미 그려져 있으면 그대로 둔다(틀던 영상이 끊기지 않게)
+    grid.className = 'lib-grid lib-solo'; grid.removeAttribute('style');
+    grid.innerHTML =
+      '<div class="lt">' +
+        '<div class="lt-stage"><div class="lt-player">' +
+          '<video playsinline controls preload="none" poster="' + T.poster + '" src="' + (T.preview || T.src) + '" aria-label="북트레일러 미리보기"></video>' +
+        '</div></div>' +
+        '<div class="lt-side">' +
+          '<h3>' + esc(T.title) + '</h3>' +
+          '<p class="lt-meta">' + T.w + '×' + T.h + ' · ' + T.secs + '초 · ' + U.fmtBytes(T.bytes) + ' · 소리 있음</p>' +
+          '<button type="button" class="btn btn-cy btn-block" data-act="trailer-save">' + icon('download') + '<span>고화질 원본 저장</span></button>' +
+          '<p class="lt-note">저장한 영상을 인스타 릴스나 피드에 그대로 올리면 돼요. 용량이 커서 와이파이에서 받는 걸 권해요.</p>' +
+        '</div>' +
+      '</div>';
+  }
+  function stopTrailer() { var v = $('#libGrid .lt video'); if (v && !v.paused) v.pause(); }
+  function saveTrailer() {
+    var T = window.EDU_TRAILER; stopTrailer();
+    U.saveSheet({ title: T.title, filename: T.filename, url: T.src, preview: T.preview, w: T.w, h: T.h, bytes: T.bytes, kind: 'video',
+      note: '용량이 ' + U.fmtBytes(T.bytes) + '라 불러오는 데 조금 걸려요.' });
+  }
+
   function paint() {
     if (!$('#libGrid')) return;
     var cl = cats();
@@ -184,6 +215,7 @@
     var on = $('#libCats [aria-selected="true"]');
     if (on && state.catShown !== state.cat) { state.catShown = state.cat; var sc = $('#libCats'); sc.scrollLeft = Math.max(0, on.offsetLeft - (sc.clientWidth - on.offsetWidth) / 2); }
     var list = inCat(state.cat), bar = $('#libBar'), grid = $('#libGrid'), box = $('#libBox'), pager = $('#libPager'), kw = EDU.currentKeyword();
+    if (state.cat === 'trailer') { paintTrailer(bar, grid, pager); return; }
     var pick = kw ? '' : '<button type="button" class="btn btn-line btn-small" data-act="pick">내 키워드 고르기</button>';
     var custom = kw && kw.id === 'custom';
     if (state.cat === 'mine') bar.innerHTML = list.length
@@ -325,7 +357,7 @@
     if (!window.EDU_ASSETS) return;
     build(); render();
     window.addEventListener('edu:profile', paint);
-    window.addEventListener('edu:view', function (e) { if (e.detail.view === 'library') paint(); });
+    window.addEventListener('edu:view', function (e) { if (e.detail.view === 'library') paint(); else stopTrailer(); });
     var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(paint, 120); });
   }
   EDU.library = { open: function (cat) { state.cat = cat; U.goTo('library'); paint(); }, refresh: function () { build(); paint(); } };

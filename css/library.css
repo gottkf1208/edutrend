@@ -106,3 +106,21 @@ dialog.lib-dlg{width:min(560px,100vw)}
 .egg-list li i .i{width:11px;height:11px;stroke-width:3}
 
 .lib-actions .btn small{font-size:11px;font-weight:600;color:var(--faint);margin-left:2px}
+
+/* ---------- 북트레일러: 한 편만 크게 ---------- */
+.lib-grid.lib-solo{display:block;height:100%;max-height:none}
+.lt{height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;gap:12px;padding:2px var(--pad) 6px}
+.lt-stage{flex:1 1 0;min-height:0;width:100%;display:flex;justify-content:center}
+.lt-player{height:100%;aspect-ratio:9/16;max-width:100%;border-radius:18px;overflow:hidden;background:#060606;box-shadow:0 14px 34px -18px rgba(0,0,0,.45)}
+.lt-player video{width:100%;height:100%;display:block;object-fit:contain;background:#060606}
+.lt-side{flex:none;width:100%;max-width:400px;display:flex;flex-direction:column;gap:8px;text-align:center}
+.lt-side h3,.lt-note{display:none}
+.lt-meta{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+@media(min-width:900px){
+  .lt{flex-direction:row;justify-content:center;align-items:center;gap:44px;padding:8px var(--pad) 12px}
+  .lt-stage{flex:none;width:auto;height:100%}
+  .lt-side{width:330px;text-align:left;gap:12px}
+  .lt-side h3{display:block;font:700 30px/1.2 var(--display);letter-spacing:-.03em;color:var(--ink)}
+  .lt-note{display:block;font-size:13.5px;line-height:1.6;color:var(--muted)}
+  .lt-meta{font-size:13.5px}
+}
