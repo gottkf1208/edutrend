@@ -2,66 +2,6 @@
 window.EDU_MOTIONLAB = {
  "items": [
   {
-   "id": "lab-title",
-   "title": "제목 타이포",
-   "secs": 5,
-   "motion": "grid-relayout",
-   "files": [
-    {
-     "size": "16x9",
-     "label": "16:9 블로그",
-     "poster": "assets/motion/lab/lab-title-16x9.jpg",
-     "gif": "assets/motion/lab/lab-title-16x9.gif",
-     "mp4": "assets/motion/lab/lab-title-16x9.mp4",
-     "gw": 1200,
-     "gh": 675,
-     "vw": 1920,
-     "vh": 1080,
-     "gifBytes": 763520,
-     "mp4Bytes": 264021
-    },
-    {
-     "size": "1x1",
-     "label": "1:1",
-     "poster": "assets/motion/lab/lab-title-1x1.jpg",
-     "gif": "assets/motion/lab/lab-title-1x1.gif",
-     "mp4": "assets/motion/lab/lab-title-1x1.mp4",
-     "gw": 1080,
-     "gh": 1080,
-     "vw": 1080,
-     "vh": 1080,
-     "gifBytes": 754244,
-     "mp4Bytes": 161346
-    },
-    {
-     "size": "4x5",
-     "label": "4:5 피드",
-     "poster": "assets/motion/lab/lab-title-4x5.jpg",
-     "gif": "assets/motion/lab/lab-title-4x5.gif",
-     "mp4": "assets/motion/lab/lab-title-4x5.mp4",
-     "gw": 1080,
-     "gh": 1350,
-     "vw": 1080,
-     "vh": 1350,
-     "gifBytes": 768228,
-     "mp4Bytes": 163686
-    },
-    {
-     "size": "9x16",
-     "label": "9:16 릴스",
-     "poster": "assets/motion/lab/lab-title-9x16.jpg",
-     "gif": "assets/motion/lab/lab-title-9x16.gif",
-     "mp4": "assets/motion/lab/lab-title-9x16.mp4",
-     "gw": 1080,
-     "gh": 1920,
-     "vw": 1080,
-     "vh": 1920,
-     "gifBytes": 787419,
-     "mp4Bytes": 179627
-    }
-   ]
-  },
-  {
    "id": "lab-keywords",
    "title": "키워드 21개 목록",
    "secs": 6,
@@ -360,7 +300,6 @@ window.EDU_MOTIONLAB = {
   }
  ],
  "used": [
-  "grid-relayout",
   "list-roll",
   "stg-fact-deck",
   "album-turn",
