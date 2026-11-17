@@ -4,7 +4,7 @@ window.EDU_MOTIONLAB = {
   {
    "id": "lab-title",
    "title": "제목 타이포",
-   "secs": 5.0,
+   "secs": 5,
    "motion": "grid-relayout",
    "files": [
     {
@@ -64,7 +64,7 @@ window.EDU_MOTIONLAB = {
   {
    "id": "lab-keywords",
    "title": "키워드 21개 목록",
-   "secs": 6.0,
+   "secs": 6,
    "motion": "list-roll",
    "files": [
     {
@@ -158,7 +158,7 @@ window.EDU_MOTIONLAB = {
   {
    "id": "lab-series",
    "title": "시리즈 네 권 표지",
-   "secs": 6.0,
+   "secs": 6,
    "motion": "album-turn",
    "files": [
     {
@@ -252,7 +252,7 @@ window.EDU_MOTIONLAB = {
   {
    "id": "lab-taglist",
    "title": "키워드 21개 꼬리표",
-   "secs": 6.0,
+   "secs": 6,
    "motion": "cn-tag-list",
    "files": [
     {
@@ -306,7 +306,7 @@ window.EDU_MOTIONLAB = {
    "poster": "assets/motion/lab/lab-reels-9x16.jpg",
    "w": 1080,
    "h": 1920,
-   "secs": 17.0,
+   "secs": 17,
    "bytes": 2348450,
    "filename": "2027미래교육트렌드_릴스_9x16.mp4",
    "motions": [
@@ -326,7 +326,7 @@ window.EDU_MOTIONLAB = {
    "poster": "assets/motion/lab/lab-feed-4x5.jpg",
    "w": 1080,
    "h": 1350,
-   "secs": 17.0,
+   "secs": 17,
    "bytes": 2174992,
    "filename": "2027미래교육트렌드_피드_4x5.mp4",
    "motions": [
@@ -346,7 +346,7 @@ window.EDU_MOTIONLAB = {
    "poster": "assets/motion/lab/lab-wide-16x9.jpg",
    "w": 1920,
    "h": 1080,
-   "secs": 17.0,
+   "secs": 17,
    "bytes": 2345347,
    "filename": "2027미래교육트렌드_가로_16x9.mp4",
    "motions": [
@@ -357,82 +357,6 @@ window.EDU_MOTIONLAB = {
     "deck-peel",
     "bro-qr-scan"
    ]
-  },
-  {
-   "id": "lab-carousel-4x5",
-   "title": "캐러셀 다섯 장 영상 4:5",
-   "sub": "14초 · MP4",
-   "src": "assets/motion/lab/lab-carousel-4x5.mp4",
-   "poster": "assets/motion/lab/lab-carousel-4x5.jpg",
-   "w": 1080,
-   "h": 1350,
-   "secs": 14.4,
-   "bytes": 1372532,
-   "filename": "2027미래교육트렌드_캐러셀_4x5.mp4",
-   "motions": [
-    "cn-magazine",
-    "cn-isotype",
-    "cn-tag-list",
-    "cn-series-ep",
-    "cn-closing-line"
-   ]
-  }
- ],
- "cards": [
-  {
-   "id": "lab-card-1",
-   "title": "캐러셀 1 · 표지",
-   "src": "assets/motion/lab/lab-card-1.png",
-   "poster": "assets/motion/lab/lab-card-1.jpg",
-   "w": 2160,
-   "h": 2700,
-   "bytes": 748195,
-   "filename": "2027미래교육트렌드_캐러셀_1.png",
-   "motion": "cn-magazine"
-  },
-  {
-   "id": "lab-card-2",
-   "title": "캐러셀 2 · 숫자",
-   "src": "assets/motion/lab/lab-card-2.png",
-   "poster": "assets/motion/lab/lab-card-2.jpg",
-   "w": 2160,
-   "h": 2700,
-   "bytes": 141824,
-   "filename": "2027미래교육트렌드_캐러셀_2.png",
-   "motion": "cn-isotype"
-  },
-  {
-   "id": "lab-card-3",
-   "title": "캐러셀 3 · 키워드",
-   "src": "assets/motion/lab/lab-card-3.png",
-   "poster": "assets/motion/lab/lab-card-3.jpg",
-   "w": 2160,
-   "h": 2700,
-   "bytes": 183916,
-   "filename": "2027미래교육트렌드_캐러셀_3.png",
-   "motion": "cn-tag-list"
-  },
-  {
-   "id": "lab-card-4",
-   "title": "캐러셀 4 · 시리즈",
-   "src": "assets/motion/lab/lab-card-4.png",
-   "poster": "assets/motion/lab/lab-card-4.jpg",
-   "w": 2160,
-   "h": 2700,
-   "bytes": 110778,
-   "filename": "2027미래교육트렌드_캐러셀_4.png",
-   "motion": "cn-series-ep"
-  },
-  {
-   "id": "lab-card-5",
-   "title": "캐러셀 5 · 마무리",
-   "src": "assets/motion/lab/lab-card-5.png",
-   "poster": "assets/motion/lab/lab-card-5.jpg",
-   "w": 2160,
-   "h": 2700,
-   "bytes": 91463,
-   "filename": "2027미래교육트렌드_캐러셀_5.png",
-   "motion": "cn-closing-line"
   }
  ],
  "used": [
@@ -443,10 +367,6 @@ window.EDU_MOTIONLAB = {
   "bro-qr-scan",
   "cn-tag-list",
   "bri-series-echo",
-  "deck-peel",
-  "cn-magazine",
-  "cn-isotype",
-  "cn-series-ep",
-  "cn-closing-line"
+  "deck-peel"
  ]
 };

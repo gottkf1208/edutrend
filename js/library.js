@@ -63,10 +63,6 @@
       if (seenV[m.id]) return; seenV[m.id] = 1;
       add({ id: 'md-' + m.id, cat: 'motion', title: m.title, sub: m.sub || '영상', kind: 'video', fit: 'contain', v: [{ size: 'mv', label: '원본', pv: m.poster || '', md: m.preview || m.src, hd: m.src, w: m.w, h: m.h, bytes: m.bytes, filename: m.filename }] });
     }); });
-    // 캐러셀 낱장(정지 그림)은 출간 포스터 칸에
-    MS.forEach(function (M) { (M.cards || []).forEach(function (m) {
-      single('cd-' + m.id, 'launch', m.title, '캐러셀 낱장', { size: 'cd', label: '원본', pv: m.poster || m.src, md: m.poster || m.src, hd: m.src, w: m.w, h: m.h, bytes: m.bytes, filename: m.filename }, { fit: 'contain' });
-    }); });
     MS.forEach(function (M) { if (M !== window.EDU_MOTION_BOOK) (M.items || []).forEach(addMotion); });
     function addMotion(m) {
       var order = ['4x5', '1x1', '16x9', '9x16'], kw = m.kw ? A.keywords.filter(function (x) { return x.id === m.kw; })[0] : null;
@@ -97,7 +93,7 @@
     [['launch', '출간 포스터'], ['kw', '키워드 포스터'], ['profile', '프사 · 배경'], ['art', '그림 원본'], ['cover', '표지']].forEach(function (c) {
       var n = count(c[0]); if (n) list.push({ id: c[0], name: c[1], n: n });
     });
-    list.push({ id: 'motion', name: '움직이는 홍보물', n: count('motion') });
+    list.push({ id: 'motion', name: '움직이는 홍보물', n: inCat('motion').length });
     return list;
   }
   /* 내 키워드: 그 키워드의 포스터를 크기별 카드로 펼치고 프사와 원본 그림을 붙인다 */
@@ -110,7 +106,16 @@
     var ar = byId['art-' + kw.id]; if (ar) out.push(Object.assign({}, ar, { id: ar.id + '@m', cat: 'mine', title: '그림 원본', sub: '투명 PNG' }));
     return out;
   }
-  function inCat(c) { return c === 'mine' ? mine() : items.filter(function (i) { return i.cat === c; }); }
+  function inCat(c) {
+    if (c === 'mine') return mine();
+    var list = items.filter(function (i) { return i.cat === c; });
+    if (c === 'motion') {   // 키워드별 영상은 내가 고른 키워드 것 하나만, 맨 앞에 (고르기 전에는 숨김)
+      var kw = EDU.currentKeyword(), id = kw ? kw.id : null;
+      list = list.filter(function (i) { return !i.kw || i.kw === id; });
+      list = list.filter(function (i) { return i.kw; }).concat(list.filter(function (i) { return !i.kw; }));
+    }
+    return list;
+  }
 
   /* ---------- render (one screen: chips + a paged grid sized to the box) ---------- */
   function render() {
@@ -182,7 +187,7 @@
     else if (state.cat === 'profile') bar.innerHTML = '<p>카톡 · 인스타 프로필 사진과 카톡 배경</p>' + pick;
     else if (state.cat === 'art') bar.innerHTML = '<p>직접 꾸밀 때 쓰는 투명 그림이에요. 시안 바탕에 얹어 주세요</p>';
     else if (state.cat === 'cover') bar.innerHTML = '<p>2027 표지 원본이에요. 입체는 투명 배경과 흰 바탕 두 가지</p>';
-    else bar.innerHTML = '<p>GIF는 블로그·카톡에, MP4는 인스타·릴스에 올려요. 누르면 크기를 골라요</p>';
+    else bar.innerHTML = kw && kw.id !== 'custom' ? '<p>GIF는 블로그·카톡, MP4는 인스타·릴스용이에요</p>' : '<p>키워드를 고르면 내 키워드 영상도 떠요</p>' + pick;
 
     if (!list.length) {
       grid.className = 'lib-grid lib-motion'; grid.removeAttribute('style'); pager.innerHTML = ''; state.pages = 1;
