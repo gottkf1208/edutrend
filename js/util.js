@@ -271,7 +271,7 @@
     nodes.forEach(function (n) { io.observe(n); });
   }
   /* ---------- views (one screen at a time; the page never scrolls) ---------- */
-  var VIEW_OF = { home: 'home', hero: 'home', kwIndex: 'home', me: 'me', start: 'me', studio: 'studio', captions: 'captions', prompts: 'captions', library: 'library', links: 'links' };
+  var VIEW_OF = { home: 'home', hero: 'home', kwIndex: 'home', me: 'me', start: 'me', studio: 'studio', captions: 'captions', prompts: 'captions', library: 'library', links: 'links', ai: 'ai', ailab: 'ai' };
   var curView = null;
   function showView(v, sub, fromUser) {
     if (!VIEW_OF[v]) v = 'home';

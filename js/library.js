@@ -54,11 +54,6 @@
     single('cv-3d', 'cover', '입체 표지', '투명 배경 PNG', { size: 'cv', label: '원본', pv: 'assets/covers/book3d.webp', md: 'assets/covers/book3d.webp', hd: 'assets/covers/book3d.png', w: c.book3d.w, h: c.book3d.h, bytes: c.book3d.bytes, filename: fname('입체표지') + '.png' }, { fit: 'contain', checker: true });
     if (c.book3dWhite) single('cv-3dw', 'cover', '입체 표지', '흰 바탕 JPG', { size: 'cv', label: '원본', pv: 'assets/covers/book3d.webp', md: 'assets/covers/book3d.webp', hd: 'assets/covers/book3d-white.jpg', w: c.book3dWhite.w, h: c.book3dWhite.h, bytes: c.book3dWhite.bytes, filename: fname('입체표지_흰바탕') + '.jpg' }, { fit: 'contain' });
     single('cv-flat', 'cover', '평면 표지', 'JPG', { size: 'cv', label: '원본', pv: 'assets/covers/2027.webp', md: 'assets/covers/2027.webp', hd: 'assets/covers/2027.jpg', w: c['2027'].w, h: c['2027'].h, bytes: c['2027'].bytes, filename: fname('표지') + '.jpg' }, { fit: 'contain' });
-    EDU.series.forEach(function (s) {
-      if (s.year === 2027) return;
-      var m = c[String(s.year)];
-      single('sr-' + s.year, 'cover', s.label === '첫 권' ? '첫 권 표지' : s.year + ' 표지', s.authors + '명 · ' + s.pub, { size: 'cv', label: '원본', pv: s.cover + '.webp', md: s.cover + '.webp', hd: s.cover + '.jpg', w: m.w, h: m.h, bytes: m.bytes, filename: '대한민국미래교육트렌드_' + s.year + '_표지.jpg' }, { fit: 'contain' });
-    });
     // ----- 움직이는 홍보물 (GIF + MP4) -----
     // 목록 파일 셋을 차례로 싣는다: 통통 튀는 책(js/motion-book.js) → 모션랩 장면(js/motionlab-data.js) → 표지 문법 모션(js/motion-data.js)
     var MS = [window.EDU_MOTION_BOOK, window.EDU_MOTIONLAB, window.EDU_MOTION].filter(Boolean), seenV = {};
@@ -186,7 +181,7 @@
     else if (state.cat === 'kw') bar.innerHTML = '<p>표지 키워드 21개, 각각 다섯 가지 크기</p>' + pick;
     else if (state.cat === 'profile') bar.innerHTML = '<p>카톡 · 인스타 프로필 사진과 카톡 배경</p>' + pick;
     else if (state.cat === 'art') bar.innerHTML = '<p>직접 꾸밀 때 쓰는 투명 그림이에요. 시안 바탕에 얹어 주세요</p>';
-    else if (state.cat === 'cover') bar.innerHTML = '<p>실제 표지 파일과 먼저 나온 세 권</p>';
+    else if (state.cat === 'cover') bar.innerHTML = '<p>2027 표지 원본이에요. 입체는 투명 배경과 흰 바탕 두 가지</p>';
     else bar.innerHTML = '<p>완성되는 대로 여기에 올라와요</p>';
 
     if (!list.length) {

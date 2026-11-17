@@ -68,7 +68,7 @@
       kw: kw ? clean(kw.name, 40) : '', kwId: kw && kw.id !== 'custom' ? kw.id : '',
       fileKw: kw ? clean(kw.tag || kw.name, 40).replace(/\s+/g, '') : '', fileName: pf ? clean(p.name, 24) : (show.name ? clean(p.name, 24) : '')
     };
-    d.line = clean(p.line, 110) || (d.kw ? '2027년 교실이 지나갈 낱말, ' + d.kw : '네 번째 미래 교육 트렌드가 나왔어요');
+    d.line = clean(p.line, 110) || (d.kw ? d.kw + ',\n제가 썼어요' : '네 번째 책이 나왔어요');   // 한 줄 소개가 없을 때 — 평범한 말로
     return d;
   }
   function geomOf(r) {
@@ -142,11 +142,54 @@
     while (s.length > 1 && tw(c, s + '…', fo) > maxW) s = s.slice(0, -1);
     return s.trim() + '…';
   }
+  /* ---------- 줄바꿈: 뜻이 이어지는 말은 한 줄에 둔다 ---------- */
+  // 표지 키워드 21개는 끊어도 되는 자리를 정해 둔다 (예: '피지컬 | AI 교육' ○, '피지컬 AI | 교육' ✕)
+  var KW_BREAKS = {
+    '콘텐츠 인플레이션': [['콘텐츠 인플레이션'], ['콘텐츠', '인플레이션']],
+    '맥락 리터러시': [['맥락 리터러시'], ['맥락', '리터러시']],
+    '슬로 리딩': [['슬로 리딩'], ['슬로', '리딩']],
+    'AI 시대의 글쓰기': [['AI 시대의 글쓰기'], ['AI 시대의', '글쓰기']],
+    '인지적 아웃소싱': [['인지적 아웃소싱'], ['인지적', '아웃소싱']],
+    '기초학력 책임교육': [['기초학력 책임교육'], ['기초학력', '책임교육']],
+    '마이크로 스포츠': [['마이크로 스포츠'], ['마이크로', '스포츠']],
+    '고1 자퇴 증가': [['고1 자퇴 증가'], ['고1 자퇴', '증가'], ['고1', '자퇴 증가']],
+    'AI 시대의 특수교육': [['AI 시대의 특수교육'], ['AI 시대의', '특수교육']],
+    '생성형 AI와 예술교육': [['생성형 AI와 예술교육'], ['생성형 AI와', '예술교육']],
+    '공동교육과정': [['공동교육과정']],
+    '포용적 과학문해력': [['포용적 과학문해력'], ['포용적', '과학문해력']],
+    '교권과 미래 교육': [['교권과 미래 교육'], ['교권과', '미래 교육']],
+    '뉴 커먼 디자인 씽킹': [['뉴 커먼 디자인 씽킹'], ['뉴 커먼', '디자인 씽킹']],
+    '교사교육자': [['교사교육자']],
+    'AI 시대 교육의 정당성': [['AI 시대 교육의 정당성'], ['AI 시대', '교육의 정당성'], ['AI 시대', '교육의', '정당성']],
+    '사회정서학습': [['사회정서학습']],
+    '피지컬 AI 교육': [['피지컬 AI 교육'], ['피지컬', 'AI 교육']],
+    '바이브 코딩과 수업 설계': [['바이브 코딩과 수업 설계'], ['바이브 코딩과', '수업 설계']],
+    'AI 스마트 글라스': [['AI 스마트 글라스'], ['AI 스마트', '글라스']],
+    '고교학점제와 대입 개편': [['고교학점제와 대입 개편'], ['고교학점제와', '대입 개편']]
+  };
+  // 문장 속에서도 떨어지면 어색한 말 묶음 (긴 것부터)
+  var GLUE = ['대한민국 미래 교육 트렌드', '미래 교육 트렌드가', '미래 교육 트렌드', '제가 썼어요', '바이브 코딩과', '교육의 정당성', '디자인 씽킹', '생성형 AI와', 'AI 시대의', '미래 교육', '수업 설계', '대입 개편', 'AI 스마트', '고1 자퇴', '슬로 리딩', 'AI 시대', 'AI 교육', '네 번째', '뉴 커먼'];
+  function glueWords(text) {
+    var t = String(text);
+    GLUE.forEach(function (ph) { if (t.indexOf(ph) > -1) t = t.split(ph).join(ph.replace(/ /g, '\uE000')); });
+    var ws = t.split(/\s+/).filter(Boolean).map(function (w) { return w.replace(/\uE000/g, ' '); }), out = [], i;
+    // 한 글자 낱말(열 수, 할 것, 더 …)은 줄 끝에 혼자 남지 않게 뒷말에 붙인다
+    for (i = 0; i < ws.length; i++) {
+      if (/^[가-힣]$/.test(ws[i]) && i + 1 < ws.length) { ws[i + 1] = ws[i] + ' ' + ws[i + 1]; continue; }
+      out.push(ws[i]);
+    }
+    return out;
+  }
   function wrapGreedy(c, text, maxW, fo) {
-    var words = text.split(/\s+/).filter(Boolean), lines = [], cur = '', i;
+    if (String(text).indexOf('\n') > -1) {           // '\n'은 꼭 끊는 자리
+      var brk = false, out = String(text).split('\n').reduce(function (all, part) { var l = wrapGreedy(c, part, maxW, fo); if (l.broken) brk = true; return all.concat(l); }, []);
+      out.broken = brk; return out;
+    }
+    var words = glueWords(text), lines = [], cur = '', i;
     for (i = 0; i < words.length; i++) {
       var wd = words[i], t = cur ? cur + ' ' + wd : wd;
       if (tw(c, t, fo) <= maxW) { cur = t; continue; }
+      if (wd.indexOf(' ') > -1 && tw(c, wd, fo) > maxW) { Array.prototype.splice.apply(words, [i, 1].concat(wd.split(' '))); lines.broken = true; i--; continue; }   // 묶음이 한 줄보다 길면 풀어서 다시
       if (cur) lines.push(cur);
       while (wd.length > 1 && tw(c, wd, fo) > maxW) {          // 띄어쓰기 없는 긴 낱말만 글자 단위로 자른다
         var j = wd.length - 1;
@@ -158,23 +201,37 @@
     if (cur) lines.push(cur);
     return lines;
   }
+  /** 같은 줄 수 안에서 줄 길이를 고르게 나눈다(묶어 둔 말은 한 덩어리). 끝줄에 낱말 하나만 남는 꼴을 막는다 */
+  function balancePara(c, text, maxW, fo) {
+    return String(text).split('\n').reduce(function (all, part) {
+      var g = wrapGreedy(c, part, maxW, fo), n = g.length;
+      if (n < 2 || g.broken) return all.concat(g);
+      var atoms = glueWords(part), m = atoms.length, INF = 1e18, dp = [], prev = [], i, j, k;
+      function wd(a, b) { return tw(c, atoms.slice(a, b + 1).join(' '), fo); }
+      for (k = 0; k <= n; k++) { dp.push([]); prev.push([]); for (j = 0; j < m; j++) { dp[k].push(INF); prev[k].push(-1); } }
+      for (j = 0; j < m; j++) { var w0 = wd(0, j); if (w0 <= maxW) dp[1][j] = w0 * w0; }
+      for (k = 2; k <= n; k++) for (j = k - 1; j < m; j++) for (i = k - 1; i <= j; i++) {
+        var w = wd(i, j); if (w > maxW || dp[k - 1][i - 1] >= INF) continue;
+        var cost = dp[k - 1][i - 1] + w * w; if (cost < dp[k][j]) { dp[k][j] = cost; prev[k][j] = i; }
+      }
+      if (dp[n][m - 1] >= INF) return all.concat(g);
+      var out = [], end = m - 1;
+      for (k = n; k >= 1; k--) { var st = k === 1 ? 0 : prev[k][end]; out.unshift(atoms.slice(st, end + 1).join(' ')); end = st - 1; }
+      return all.concat(out);
+    }, []);
+  }
   /** paragraph that auto-shrinks, then balances its lines. o: maxW,maxH,maxLines,sizeMax,sizeMin,lh,padEm */
   function fitPara(c, text, o) {
     var lh = o.lh || 1.3, fo = { w: 700, s: o.sizeMax, ls: o.ls == null ? -0.03 : o.ls }, lines, s = o.sizeMax, cut = false;
     for (; ;) {
       fo.s = s; lines = wrapGreedy(c, text, o.maxW, fo);
-      if ((lines.length <= o.maxLines && ((lines.length - 1) * lh + 0.88 + (o.padEm || 0)) * s <= o.maxH) || s <= o.sizeMin) break;
+      // 붙여 둘 말이 갈라졌으면 글자를 조금 더 줄여 본다(처음 크기의 62%까지만)
+      if ((lines.length <= o.maxLines && ((lines.length - 1) * lh + 0.88 + (o.padEm || 0)) * s <= o.maxH && !(lines.broken && s > o.sizeMax * 0.62)) || s <= o.sizeMin) break;
       s = Math.max(o.sizeMin, s * 0.96);
     }
     if (lines.length > o.maxLines) { lines = lines.slice(0, o.maxLines); lines[o.maxLines - 1] = ellip(c, lines[o.maxLines - 1] + '…', o.maxW, fo); cut = true; }
     var n = lines.length, w = 0;
-    if (n > 1 && !cut) {
-      var lo = 0, hi = o.maxW, k;
-      text.split(/\s+/).forEach(function (wd) { lo = Math.max(lo, Math.min(o.maxW, tw(c, wd, fo))); });
-      for (k = 0; k < 12 && hi - lo > 2; k++) { var mid = (lo + hi) / 2; if (wrapGreedy(c, text, mid, fo).length <= n) hi = mid; else lo = mid; }
-      var bl = wrapGreedy(c, text, hi, fo);
-      if (bl.length === n) lines = bl;
-    }
+    if (n > 1 && !cut) { var bl = balancePara(c, text, o.maxW, fo); if (bl.length === n) lines = bl; }
     lines.forEach(function (l) { w = Math.max(w, tw(c, l, fo)); });
     return { size: s, lines: lines, w: w, h: ((n - 1) * lh + 0.88) * s, lh: lh, ls: fo.ls };
   }
@@ -192,6 +249,11 @@
   }
   /** keyword-style headline: tries every way to break at spaces into minLines..maxLines and keeps the largest */
   function fitHeadline(c, text, o) {
+    var fixed = !o._free && KW_BREAKS[String(text).replace(/\s+/g, ' ').trim()];
+    if (fixed) {
+      var ok = fixed.filter(function (ch) { return ch.length <= (o.maxLines || 3) && ch.length >= Math.min(o.minLines || 1, fixed[fixed.length - 1].length); });
+      if (ok.length) return fitChoices(c, ok, Object.assign({}, o, { minLines: 1 }));
+    }
     var words = text.split(/\s+/).filter(Boolean), n = words.length, best = null;
     var maxL = Math.min(o.maxLines || 3, n), minL = Math.min(o.minLines || 1, maxL), cols = o.cols || [INK, WH];
     function tryCuts(cuts) {
@@ -200,7 +262,8 @@
       var r = evalHead(c, lines, o), mx = Math.max.apply(null, r.ws), mn = Math.min.apply(null, r.ws), odd = false;
       // '코딩과 | 수업'처럼 조사로 끝난 낱말 뒤에서 끊는 쪽을 고른다 (조사 낱말이 줄 가운데에 있으면 감점)
       if (lines.length > 1) lines.forEach(function (L) { var ws = L.segs[0].t.split(' '); for (var q = 0; q < ws.length - 1; q++) if (ws[q].length > 1 && /[과와의에를을]$/.test(ws[q])) odd = true; });
-      r.score = r.size * (mn / mx < 0.4 ? 0.85 : 1) * (odd ? 0.78 : 1) * (1 - 0.03 * (lines.length - 1));
+      var lastT = lines[lines.length - 1].segs[0].t, lone = lines.length > 1 && n > 2 && lastT.indexOf(' ') < 0 && lastT.length <= 2;   // 끝줄에 짧은 낱말 하나만 남는 꼴
+      r.score = r.size * (mn / mx < 0.4 ? 0.85 : 1) * (odd ? 0.78 : 1) * (lone ? 0.74 : 1) * (1 - 0.03 * (lines.length - 1));
       if (!best || r.score > best.score) best = r;
     }
     (function rec(cuts, from) {
@@ -220,7 +283,7 @@
       r.score = r.size * (1 - 0.03 * (ch.length - 1));
       if (!best || r.score > best.score) best = r;
     });
-    return best || fitHeadline(c, choices[0].join(' '), o);
+    return best || fitHeadline(c, choices[0].join(' '), Object.assign({}, o, { _free: true }));
   }
   /** the real title lockup: 2027(흰) 대한민국 / 미래 교육 / 트렌드(흰) — two lines on wide cards */
   function fitLockup(c, o, wide) {
@@ -515,10 +578,11 @@
     var W = g.W, H = g.H, S = g.S, m = g.m, bk = im.book, zb = H - g.bot, bh, bw, bx, by;
     rect(c, 0, 0, W, H, WH);
     if (g.kbg) { var wb = Math.round(H * 0.6), fb = Math.round(H * 0.88); rect(c, 0, wb, W, fb - wb, CY); rect(c, 0, fb, W, H - fb, INK); }
-    if (g.land) { bh = H * 0.9; bw = bh * BOOK_AR; bx = W - bw * 0.96; by = H - bh * 0.95; }
+    // 책은 자르지 않는다: 어느 크기에서도 표지 전체가 여백 안에 들어온다
+    if (g.land) { bh = H * 0.8; bw = bh * BOOK_AR; bx = W - m * 0.9 - bw; by = (H - bh) / 2; }
     else if (g.kbg) { bh = H * 0.205; bw = bh * BOOK_AR; bx = W - m * 0.55 - bw; by = zb - bh * 0.985; }
-    else if (g.story) { bh = H * 0.33; bw = bh * BOOK_AR; bx = W - bw * 0.95; by = zb - bh * 0.92; }
-    else { bh = H * (g.id === '1x1' ? 0.46 : 0.44); bw = bh * BOOK_AR; bx = W - bw * 0.95; by = H - bh * 0.965; }
+    else if (g.story) { bh = H * 0.31; bw = bh * BOOK_AR; bx = W - m * 0.7 - bw; by = zb - bh; }
+    else { bh = H * (g.id === '1x1' ? 0.43 : 0.41); bw = bh * BOOK_AR; bx = W - m * 0.7 - bw; by = H - m * 0.75 - bh; }
     if (bk) c.drawImage(bk, bx, by, bw, bh);
     // 왼쪽 아래: 키워드 칩 + 작은 줄
     var capS = S * 0.023 * g.ts, chipS = S * 0.031 * g.ts, leftMax = bx + bw * 0.12 - m - S * 0.03, capBase = zb - capS * 0.11;
