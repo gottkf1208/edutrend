@@ -87,18 +87,19 @@
   }
 
   function count(c) { return items.filter(function (i) { return i.cat === c; }).length; }
+  function kwId() { var k = EDU.currentKeyword(); return k && k.id !== 'custom' ? k.id : null; }
+  /* 키워드마다 다른 자료(포스터·프사·영상·그림 원본)는 고른 키워드 것만 보여 준다. 키워드 포스터·그림 원본은 '내 키워드' 칸에 모음 */
   function cats() {
-    var kw = EDU.currentKeyword(), list = [];
-    if (kw && kw.id !== 'custom' && mine().length) list.push({ id: 'mine', name: '내 키워드', n: mine().length });
-    [['launch', '출간 포스터'], ['kw', '키워드 포스터'], ['profile', '프사 · 배경'], ['art', '그림 원본'], ['cover', '표지']].forEach(function (c) {
-      var n = count(c[0]); if (n) list.push({ id: c[0], name: c[1], n: n });
+    var list = [{ id: 'mine', name: '내 키워드', n: mine().length }];
+    [['launch', '출간 포스터'], ['profile', '프사 · 배경'], ['cover', '표지']].forEach(function (c) {
+      var n = inCat(c[0]).length; if (n) list.push({ id: c[0], name: c[1], n: n });
     });
     list.push({ id: 'motion', name: '움직이는 홍보물', n: inCat('motion').length });
     return list;
   }
   /* 내 키워드: 그 키워드의 포스터를 크기별 카드로 펼치고 프사와 원본 그림을 붙인다 */
   function mine() {
-    var kw = EDU.currentKeyword(); if (!kw) return [];
+    var kw = EDU.currentKeyword(); if (!kw || kw.id === 'custom') return [];
     var out = [], it = byId['kw-' + kw.id];
     if (it) it.v.forEach(function (v) { out.push({ id: it.id + '@' + v.size, cat: 'mine', title: v.label, sub: v.w + '×' + v.h, v: [v], kw: kw.id, template: it.template, fit: 'contain', poster: true }); });
     var pf = byId['pf-' + kw.id]; if (pf) out.push(Object.assign({}, pf, { id: pf.id + '@m', cat: 'mine', title: '프사', sub: '2160×2160' }));
@@ -109,8 +110,8 @@
   function inCat(c) {
     if (c === 'mine') return mine();
     var list = items.filter(function (i) { return i.cat === c; });
-    if (c === 'motion') {   // 키워드별 영상은 내가 고른 키워드 것 하나만, 맨 앞에 (고르기 전에는 숨김)
-      var kw = EDU.currentKeyword(), id = kw ? kw.id : null;
+    if (c === 'motion' || c === 'profile') {   // 키워드별 자료는 내가 고른 키워드 것 하나만, 맨 앞에 (고르기 전에는 숨김)
+      var id = kwId();
       list = list.filter(function (i) { return !i.kw || i.kw === id; });
       list = list.filter(function (i) { return i.kw; }).concat(list.filter(function (i) { return !i.kw; }));
     }
@@ -131,6 +132,7 @@
     $('#libGrid').addEventListener('click', function (e) {
       var b = e.target.closest('[data-item]'); if (b) return detail(b.getAttribute('data-item'));
       var g = e.target.closest('[data-egg]'); if (g) window.dispatchEvent(new CustomEvent('edu:egg', { detail: g.getAttribute('data-egg') }));
+      var a = e.target.closest('[data-act]'); if (a) U.goTo(a.getAttribute('data-act') === 'studio' ? 'studio' : 'kwIndex');
     });
     $('#libPager').addEventListener('click', function (e) { var b = e.target.closest('[data-page]'); if (b && !b.disabled) turn(+b.getAttribute('data-page')); });
     $('#libBar').addEventListener('click', function (e) {
@@ -173,7 +175,8 @@
   function paint() {
     if (!$('#libGrid')) return;
     var cl = cats();
-    if (!state.cat || !cl.some(function (c) { return c.id === state.cat; })) state.cat = cl[0].id;
+    if (state.cat === 'kw' || state.cat === 'art') state.cat = 'mine';   // 예전 칸 이름
+    if (!state.cat || !cl.some(function (c) { return c.id === state.cat; })) state.cat = kwId() ? 'mine' : cl[1].id;
     $('#libCats').innerHTML = cl.map(function (c) {
       return '<button type="button" class="chip" role="tab" data-cat="' + c.id + '" aria-selected="' + (c.id === state.cat) + '">' + esc(c.name) + (c.n ? '<small>' + c.n + '</small>' : '') + '</button>';
     }).join('');
@@ -181,16 +184,26 @@
     if (on && state.catShown !== state.cat) { state.catShown = state.cat; var sc = $('#libCats'); sc.scrollLeft = Math.max(0, on.offsetLeft - (sc.clientWidth - on.offsetWidth) / 2); }
     var list = inCat(state.cat), bar = $('#libBar'), grid = $('#libGrid'), box = $('#libBox'), pager = $('#libPager'), kw = EDU.currentKeyword();
     var pick = kw ? '' : '<button type="button" class="btn btn-line btn-small" data-act="pick">내 키워드 고르기</button>';
-    if (state.cat === 'mine') bar.innerHTML = '<p><b>' + esc(kw.name) + '</b> 홍보물 모음</p><button type="button" class="btn btn-dark btn-small" data-act="all">' + icon('download') + '포스터 한 번에</button>';
+    var custom = kw && kw.id === 'custom';
+    if (state.cat === 'mine') bar.innerHTML = list.length
+      ? '<p><b>' + esc(kw.name) + '</b> 홍보물 모음</p><button type="button" class="btn btn-dark btn-small" data-act="all">' + icon('download') + '포스터 한 번에</button>'
+      : '<p>' + (custom ? '직접 쓴 키워드는 카드에서 만들어요' : '키워드를 고르면 내 것만 모아서 보여 줘요') + '</p>';
     else if (state.cat === 'launch') bar.innerHTML = '<p>책 소식을 알리는 포스터예요. 누르면 크기를 고를 수 있어요</p>';
-    else if (state.cat === 'kw') bar.innerHTML = '<p>표지 키워드 21개, 각각 다섯 가지 크기</p>' + pick;
-    else if (state.cat === 'profile') bar.innerHTML = '<p>카톡 · 인스타 프로필 사진과 카톡 배경</p>' + pick;
-    else if (state.cat === 'art') bar.innerHTML = '<p>직접 꾸밀 때 쓰는 투명 그림이에요. 시안 바탕에 얹어 주세요</p>';
+    else if (state.cat === 'profile') bar.innerHTML = '<p>카톡 · 인스타 프로필 사진과 카톡 배경' + (kwId() ? '. 맨 앞이 내 키워드예요' : '') + '</p>' + pick;
     else if (state.cat === 'cover') bar.innerHTML = '<p>2027 표지 원본이에요. 입체는 투명 배경과 흰 바탕 두 가지</p>';
-    else bar.innerHTML = kw && kw.id !== 'custom' ? '<p>GIF는 블로그·카톡, MP4는 인스타·릴스용이에요</p>' : '<p>키워드를 고르면 내 키워드 영상도 떠요</p>' + pick;
+    else bar.innerHTML = kw ? '<p>GIF는 블로그·카톡, MP4는 인스타·릴스용이에요</p>' : '<p>키워드를 고르면 내 키워드 영상도 떠요</p>' + pick;
 
     if (!list.length) {
       grid.className = 'lib-grid lib-motion'; grid.removeAttribute('style'); pager.innerHTML = ''; state.pages = 1;
+      if (state.cat === 'mine') {
+        grid.innerHTML =
+          '<div class="lib-empty">' +
+            '<h3>' + (custom ? '직접 쓴 키워드예요' : '내 키워드를 골라 주세요') + '</h3>' +
+            '<p>' + (custom ? '표지 키워드 21개가 아니면 미리 만든 포스터가 없어요. 카드에서 내 키워드로 바로 만들 수 있어요.' : '고른 키워드의 포스터, 프사, 영상, 그림 원본이 이 칸에 모여요.') + '</p>' +
+            '<button type="button" class="btn btn-dark" data-act="' + (custom ? 'studio' : 'pick') + '">' + (custom ? '카드 만들기' : '내 키워드 고르기') + '</button>' +
+          '</div>';
+        return;
+      }
       grid.innerHTML =
         '<div class="lib-empty">' +
           '<button type="button" class="lib-emptytio" data-egg="bake" aria-label="영상을 굽고 있는 TIO"><img src="assets/tio/bake.webp" alt="" width="150" height="196"></button>' +
