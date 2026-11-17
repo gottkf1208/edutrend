@@ -89,12 +89,13 @@
   function count(c) { return items.filter(function (i) { return i.cat === c; }).length; }
   function kwId() { var k = EDU.currentKeyword(); return k && k.id !== 'custom' ? k.id : null; }
   /* 키워드마다 다른 자료(포스터·프사·영상·그림 원본)는 고른 키워드 것만 보여 준다. 키워드 포스터·그림 원본은 '내 키워드' 칸에 모음 */
-  function cats() {
-    var list = [{ id: 'mine', name: '내 키워드', n: mine().length }];
-    [['launch', '출간 포스터'], ['profile', '프사 · 배경'], ['cover', '표지']].forEach(function (c) {
+  function cats() {   // 자주 쓰는 것부터: 움직이는 홍보물 → 프사·배경 → 출간 포스터 → 내 키워드 → 표지
+    var list = [{ id: 'motion', name: '움직이는 홍보물', n: inCat('motion').length }];
+    [['profile', '프사 · 배경'], ['launch', '출간 포스터']].forEach(function (c) {
       var n = inCat(c[0]).length; if (n) list.push({ id: c[0], name: c[1], n: n });
     });
-    list.push({ id: 'motion', name: '움직이는 홍보물', n: inCat('motion').length });
+    list.push({ id: 'mine', name: '내 키워드', n: mine().length });
+    var nc = inCat('cover').length; if (nc) list.push({ id: 'cover', name: '표지', n: nc });
     return list;
   }
   /* 내 키워드: 그 키워드의 포스터를 크기별 카드로 펼치고 프사와 원본 그림을 붙인다 */
@@ -176,7 +177,7 @@
     if (!$('#libGrid')) return;
     var cl = cats();
     if (state.cat === 'kw' || state.cat === 'art') state.cat = 'mine';   // 예전 칸 이름
-    if (!state.cat || !cl.some(function (c) { return c.id === state.cat; })) state.cat = kwId() ? 'mine' : cl[1].id;
+    if (!state.cat || !cl.some(function (c) { return c.id === state.cat; })) state.cat = cl[0].id;
     $('#libCats').innerHTML = cl.map(function (c) {
       return '<button type="button" class="chip" role="tab" data-cat="' + c.id + '" aria-selected="' + (c.id === state.cat) + '">' + esc(c.name) + (c.n ? '<small>' + c.n + '</small>' : '') + '</button>';
     }).join('');

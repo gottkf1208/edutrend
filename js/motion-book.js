@@ -1,4 +1,4 @@
-/* 통통 튀는 책 — 직접 렌더(실제 표지 픽셀, 1080p 60fps)와 AI 영상 한 편. build/bounce/make.py 참고 · 키워드 흰 카드 두 종(모션랩 deck-peel·cover-ring, build/cards) */
+/* 통통 튀는 책 — 직접 렌더(실제 표지 픽셀, 1080p 60fps)와 AI 영상 한 편. build/bounce/make.py 참고 · 키워드 흰 카드 넘기기(모션랩 deck-peel, build/cards) */
 window.EDU_MOTION_BOOK = {
  "items": [
   {
@@ -116,52 +116,6 @@ window.EDU_MOTION_BOOK = {
      "vh": 1080,
      "gifBytes": 3013877,
      "mp4Bytes": 2856902
-    }
-   ]
-  },
-  {
-   "id": "kw-ring",
-   "title": "키워드 카드 고리",
-   "secs": 10,
-   "files": [
-    {
-     "size": "1x1",
-     "label": "1:1",
-     "poster": "assets/motion/cards/kw-ring-1x1.jpg",
-     "gif": "assets/motion/cards/kw-ring-1x1.gif",
-     "mp4": "assets/motion/cards/kw-ring-1x1.mp4",
-     "gw": 800,
-     "gh": 800,
-     "vw": 1080,
-     "vh": 1080,
-     "gifBytes": 6662091,
-     "mp4Bytes": 5070971
-    },
-    {
-     "size": "4x5",
-     "label": "4:5 피드",
-     "poster": "assets/motion/cards/kw-ring-4x5.jpg",
-     "gif": "assets/motion/cards/kw-ring-4x5.gif",
-     "mp4": "assets/motion/cards/kw-ring-4x5.mp4",
-     "gw": 720,
-     "gh": 900,
-     "vw": 1080,
-     "vh": 1350,
-     "gifBytes": 5544374,
-     "mp4Bytes": 5147703
-    },
-    {
-     "size": "16x9",
-     "label": "16:9 블로그",
-     "poster": "assets/motion/cards/kw-ring-16x9.jpg",
-     "gif": "assets/motion/cards/kw-ring-16x9.gif",
-     "mp4": "assets/motion/cards/kw-ring-16x9.mp4",
-     "gw": 960,
-     "gh": 540,
-     "vw": 1920,
-     "vh": 1080,
-     "gifBytes": 6947734,
-     "mp4Bytes": 8381754
     }
    ]
   }
