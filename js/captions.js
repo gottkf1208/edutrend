@@ -198,6 +198,15 @@
     if (v) text = P.len === 'long' ? longText(v, vars, emoji) : shortOrMedium(v, vars, emoji, P.len === 'short' ? '\n' : '\n\n');
     var groups = tagGroups(profile, kw, opts.custom || S.custom);
     var tags = selectedTags(P.id, groups, opts.tagOv || S.tagOv);
+    if (P.id === 'linkedin' && C.linkedinEn) {            // 링크드인은 영어로
+      var E = C.linkedinEn, kwEn = kw ? (C.kwEn[kw.id] || '‘' + clean(kw.name) + '’') : '', url = clean(profile.link);
+      n = E.variants.length; i = ((parseInt(variant, 10) || 0) % n + n) % n;
+      text = E.variants[i].map(function (ln) {
+        var t = typeof ln === 'string' ? ln : (kwEn ? ln[0] : ln[1]);
+        return t.replace('{kw}', kwEn).replace('{book}', E.book).replace('{link}', url || E.linkFallback);
+      }).join('\n\n');
+      tags = E.tags.slice(0, 3).concat(kw && C.kwEnTag[kw.id] ? [C.kwEnTag[kw.id]] : []);
+    }
     var tagText = tags.join(' ');
     return { platform: P.id, mood: M.id, len: P.len, variant: i, variants: n, text: text, tags: tags, tagText: tagText,
       tagComma: tags.map(function (t) { return t.slice(1); }).join(', '), full: join(text, tagText), weight: xWeight(join(text, tagText)), groups: groups };

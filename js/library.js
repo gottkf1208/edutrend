@@ -56,7 +56,7 @@
     single('cv-flat', 'cover', '평면 표지', 'JPG', { size: 'cv', label: '원본', pv: 'assets/covers/2027.webp', md: 'assets/covers/2027.webp', hd: 'assets/covers/2027.jpg', w: c['2027'].w, h: c['2027'].h, bytes: c['2027'].bytes, filename: fname('표지') + '.jpg' }, { fit: 'contain' });
     // ----- 움직이는 홍보물 (GIF + MP4) -----
     // 목록 파일 셋을 차례로 싣는다: 통통 튀는 책(js/motion-book.js) → 모션랩 장면(js/motionlab-data.js) → 표지 문법 모션(js/motion-data.js)
-    var MS = [window.EDU_MOTION_BOOK, window.EDU_MOTIONLAB, window.EDU_MOTION].filter(Boolean), seenV = {};
+    var MS = [window.EDU_MOTION_BOOK, window.EDU_MOTIONLAB, window.EDU_MOTIONLAB2, window.EDU_MOTIONLAB3, window.EDU_MOTION].filter(Boolean), seenV = {};
     // 직접 렌더한 '통통 튀는 책'을 맨 앞에, 그다음 완성 영상(릴스·피드 영상)
     if (window.EDU_MOTION_BOOK) (window.EDU_MOTION_BOOK.items || []).forEach(addMotion);
     MS.forEach(function (M) { (M.videos || []).forEach(function (m) {
@@ -182,7 +182,7 @@
     else if (state.cat === 'profile') bar.innerHTML = '<p>카톡 · 인스타 프로필 사진과 카톡 배경</p>' + pick;
     else if (state.cat === 'art') bar.innerHTML = '<p>직접 꾸밀 때 쓰는 투명 그림이에요. 시안 바탕에 얹어 주세요</p>';
     else if (state.cat === 'cover') bar.innerHTML = '<p>2027 표지 원본이에요. 입체는 투명 배경과 흰 바탕 두 가지</p>';
-    else bar.innerHTML = '<p>완성되는 대로 여기에 올라와요</p>';
+    else bar.innerHTML = '<p>GIF는 블로그·카톡에, MP4는 인스타·릴스에 올려요. 누르면 크기를 골라요</p>';
 
     if (!list.length) {
       grid.className = 'lib-grid lib-motion'; grid.removeAttribute('style'); pager.innerHTML = ''; state.pages = 1;

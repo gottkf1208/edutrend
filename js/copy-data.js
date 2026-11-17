@@ -1066,5 +1066,53 @@
     k21: '종이 시간표 칸들이 서랍처럼 열리고, 그 뒤로 종이 문이 일어서는 팝업. 문만 시안.'
   };
 
+
+  /* ============================================================
+     링크드인은 영어로 — 책 제목은 한글 그대로 두고 괄호 안에 뜻을 풀어 준다(공식 영문 제목이 아님)
+     {kw} 내 키워드(영문) · {link} 책 링크 또는 서점 검색 안내
+     ============================================================ */
+  COPY.kwEn = {
+    k01: 'Content Inflation', k02: 'Context Literacy', k03: 'Slow Reading', k04: 'Writing in the Age of AI',
+    k05: 'Cognitive Outsourcing', k06: 'Accountability for Basic Academic Skills', k07: 'Micro Sports',
+    k08: 'The Rise in First-Year High School Dropouts', k09: 'Special Education in the Age of AI',
+    k10: 'Generative AI and Arts Education', k11: 'Joint Curriculum', k12: 'Inclusive Science Literacy',
+    k13: 'Teachers’ Rights and the Future of Education', k14: 'New Common Design Thinking', k15: 'Teacher Educators',
+    k16: 'The Legitimacy of Education in the Age of AI', k17: 'Social and Emotional Learning', k18: 'Physical AI Education',
+    k19: 'Vibe Coding and Lesson Design', k20: 'AI Smart Glasses', k21: 'The High School Credit System and College Admissions Reform'
+  };
+  COPY.kwEnTag = {
+    k01: '#ContentInflation', k02: '#ContextLiteracy', k03: '#SlowReading', k04: '#AIWriting', k05: '#CognitiveOutsourcing',
+    k06: '#BasicSkills', k07: '#MicroSports', k08: '#HighSchoolDropouts', k09: '#SpecialEducation', k10: '#ArtsEducation',
+    k11: '#JointCurriculum', k12: '#ScienceLiteracy', k13: '#TeachersRights', k14: '#DesignThinking', k15: '#TeacherEducators',
+    k16: '#AIinEducation', k17: '#SEL', k18: '#PhysicalAI', k19: '#VibeCoding', k20: '#SmartGlasses', k21: '#CollegeAdmissions'
+  };
+  COPY.linkedinEn = {
+    book: '『2027 대한민국 미래 교육 트렌드』 (2027 Korea Future Education Trends)',
+    linkFallback: 'You can find it at Korean bookstores by searching “2027 대한민국 미래 교육 트렌드”.',
+    tags: ['#FutureOfEducation', '#EducationTrends', '#KoreaEducation', '#Teachers'],
+    /* 각 줄: [키워드가 있을 때, 없을 때] 또는 문자열 */
+    variants: [
+      [
+        'A 2027 classroom spoiler from Korea.',
+        ['I wrote the chapter on {kw} in {book}, a new book by 30 educators working in schools.', 'I wrote a chapter in {book}, a new book by 30 educators working in schools.'],
+        ['The book covers 21 keywords for the year ahead. The other 20 are in the book.', 'The book covers 21 keywords for the year ahead.'],
+        'Published by Ddstone (뜨인돌). It is written in Korean.',
+        '{link}'
+      ],
+      [
+        'Some news: I’m one of 30 co-authors of {book}, now out from Ddstone (뜨인돌).',
+        ['Each of us took one topic that schools in Korea will be dealing with next year. Mine is {kw}.', 'Each of us took one topic that schools in Korea will be dealing with next year.'],
+        'It is the fourth book in the series and it is written in Korean. If you work in or with Korean schools, I’d be glad to hear what you think.',
+        '{link}'
+      ],
+      [
+        ['The manuscript is finished and the book is out. My chapter is on {kw}.', 'The manuscript is finished and the book is out.'],
+        '{book} brings together 30 educators and 21 keywords for next year’s classrooms.',
+        'Writing while teaching was not easy, and I’m glad it’s done. Published by Ddstone (뜨인돌), in Korean.',
+        '{link}'
+      ]
+    ]
+  };
+
   window.EDU_COPY = COPY;
 })();
