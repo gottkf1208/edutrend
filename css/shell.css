@@ -158,6 +158,9 @@
 .sh-linkico .bk-ico{width:26px;height:26px}
 .sh-buyurl{margin:8px 0 10px}
 .sh-buyurl code{font-size:12.5px}
+@media(max-width:420px){ .sh-buyurl code{font-size:12px;letter-spacing:-.01em} }
+@media(max-width:380px){ .sh-buyurl .btn span{display:none} .sh-buyurl .btn{padding-left:11px;padding-right:11px} }
+@media(max-width:345px){ .sh-buyurl code{white-space:normal;word-break:break-all;line-height:1.35} }
 .sh-footbuy{display:inline-flex;align-items:center;gap:6px;color:inherit;vertical-align:middle;margin-top:-2px}
 .sh-footbuy .bk-ico{width:18px;height:18px}
 .sh-footbuy em{font-style:normal;display:inline-flex;align-items:center;gap:2px;color:var(--cy);font-weight:700;margin-left:2px}

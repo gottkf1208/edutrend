@@ -197,7 +197,7 @@
           '</div></div>' +
         '<div class="sh-linkpanes">' +
           '<div class="card sh-pane is-on" data-pane="buy"><h3 class="sh-h3">책 구매 링크</h3>' +
-            '<div class="sh-share sh-buyurl"><code>' + esc(b.buy.url.replace(/^https?:\/\//, '')) + '</code><button type="button" class="btn btn-dark btn-small" id="buyCopy">' + icon('copy') + '복사</button></div>' +
+            '<div class="sh-share sh-buyurl"><code>' + esc(b.buy.url.replace(/^https?:\/\//, '')) + '</code><button type="button" class="btn btn-dark btn-small" id="buyCopy" aria-label="구매 링크 복사">' + icon('copy') + '<span>복사</span></button></div>' +
             stores +
             (b.stores.some(function (st) { return st.url; }) ? '' : '<p class="note sh-storenote">지금은 서점 검색 결과로 이어져요. 책 페이지가 열리면 그 주소로 바로 가게 바꿔 둘게요.</p>') +
             '<h3 class="sh-h3 sh-h3b">먼저 나온 세 권</h3><div class="sh-backs">' + back + '</div></div>' +
