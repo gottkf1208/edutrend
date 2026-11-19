@@ -79,9 +79,10 @@
   /* ---------------- 내 정보 ---------------- */
   function me() {
     var s = $('#start'), A = window.EDU_ASSETS || { keywords: [] };
-    var opts = '<option value="">키워드를 골라 주세요</option>' + A.keywords.map(function (k) {
-      return '<option value="' + k.id + '">' + esc(k.name) + '</option>';
-    }).join('') + '<option value="custom">목록에 없어요 (직접 쓰기)</option>';
+    var opts = '<option value="">키워드를 골라 주세요</option>' +
+      '<optgroup label="여는 글">' + (EDU.openers || []).map(function (k) { return '<option value="' + k.id + '">' + esc(k.role) + '</option>'; }).join('') + '</optgroup>' +
+      '<optgroup label="표지 키워드 21">' + A.keywords.map(function (k) { return '<option value="' + k.id + '">' + esc(k.name) + '</option>'; }).join('') + '</optgroup>' +
+      '<option value="custom">목록에 없어요 (직접 쓰기)</option>';
     s.innerHTML =
       '<div class="sh-me">' +
         '<div class="vhead"><h2>내 정보</h2><p>이 기기에만 저장돼요</p></div>' +
@@ -125,11 +126,11 @@
       $('#tagCard').innerHTML =
         '<div class="sh-tagtop">' +
           '<p class="sh-tagbrace"><b>{</b><span>2027 대한민국 미래 교육 트렌드</span><b>}</b></p>' +
-          '<p class="sh-tagkw' + (kw ? '' : ' is-empty') + '">' + esc(kw ? kw.name : '내 키워드') + '</p>' +
+          '<p class="sh-tagkw' + (kw ? '' : ' is-empty') + (kw && kw.name.length > 16 ? ' is-long' : '') + '">' + (kw ? esc(kw.name).replace(/, /g, ',<br>') : '내 키워드') + '</p>' +
           '<span class="spark sh-tagspark" aria-hidden="true"></span>' +
         '</div>' +
         '<div class="sh-tagbot">' +
-          '<span class="sh-taglabel">저자</span>' +
+          '<span class="sh-taglabel">' + (kw && kw.opener ? esc(kw.label) : '저자') + '</span>' +
           '<strong class="' + (pp.name ? '' : 'is-empty') + '">' + esc(pp.name || '이름') + '</strong>' +
           (pp.org ? '<span>' + esc(pp.org) + '</span>' : '') +
           (hd ? '<span class="sh-taghandle">' + esc(hd) + '</span>' : '') +

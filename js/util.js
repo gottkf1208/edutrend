@@ -97,7 +97,7 @@
   /** keyword object for the current profile: {id,name,tag} (art at EDU.kwArt(id)) or a custom one {id:'custom',name,tag} or null */
   EDU.currentKeyword = function (p) {
     p = p || profile;
-    var list = (window.EDU_ASSETS && window.EDU_ASSETS.keywords) || [];
+    var list = ((window.EDU_ASSETS && window.EDU_ASSETS.keywords) || []).concat(EDU.openers || []);   // 여는 글 두 편 포함
     if (p.kw && p.kw !== 'custom') { for (var i = 0; i < list.length; i++) if (list[i].id === p.kw) return list[i]; }
     if (p.kw === 'custom' && p.kwCustom) return { id: 'custom', name: p.kwCustom, tag: p.kwCustom.replace(/\s+/g, '') };
     return null;

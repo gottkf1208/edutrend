@@ -70,7 +70,8 @@
       kw: kw ? clean(kw.name, 40) : '', kwId: kw && kw.id !== 'custom' ? kw.id : '',
       fileKw: kw ? clean(kw.tag || kw.name, 40).replace(/\s+/g, '') : '', fileName: pf ? clean(p.name, 24) : (show.name ? clean(p.name, 24) : '')
     };
-    d.kwNo = d.kwId ? parseInt(d.kwId.slice(1), 10) : 0;
+    d.kwNo = /^k\d+$/.test(d.kwId) ? parseInt(d.kwId.slice(1), 10) : 0;        // 표지 키워드 21개만 번호가 있다
+    d.opener = !!(kw && kw.opener); d.kwLabel = d.opener ? (kw.label || '여는 글') : '키워드'; d.kwSub = d.opener ? clean(kw.sub, 60) : '';
     d.own = !!clean(p.line, 110);
     d.line = clean(p.line, 110) || hookLine(d, opts.hook != null ? opts.hook : state.hook);
     return d;
@@ -83,7 +84,14 @@
     function (d) { return '내년 교실 미리 보기\n' + d.kw; }
   ];
   var HOOKS_BOOK = ['2027 교실 스포일러', '현장 교육전문가 30명이 고른\n2027 키워드 21', '내년 교실,\n미리 보기', '네 번째 책이 나왔어요'];
-  function hookList(d) { return d.kw ? HOOKS_KW.map(function (f) { return f(d); }).filter(Boolean) : HOOKS_BOOK; }
+  /* 여는 글을 쓴 두 분께 넣는 문구 */
+  var HOOKS_OPEN = [
+    function (d) { return d.kwLabel + '\n' + headBreak(d.kw); },
+    function (d) { return d.kwSub ? d.kw + '\n' + d.kwSub : ''; },
+    function (d) { return '2027 대한민국 미래 교육 트렌드\n' + d.kwLabel; }
+  ];
+  function headBreak(t) { var b = KW_BREAKS[t]; return b && b.length > 1 && t.length > 14 ? b[1].join('\n') : t; }
+  function hookList(d) { return d.kw ? (d.opener ? HOOKS_OPEN : HOOKS_KW).map(function (f) { return f(d); }).filter(Boolean) : HOOKS_BOOK; }
   function hookLine(d, i) { var l = hookList(d); return l[((i | 0) % l.length + l.length) % l.length]; }
   function geomOf(r) {
     var W = r.w, H = r.h, S = Math.min(W, H), m = Math.round(S * 0.07);
@@ -179,7 +187,10 @@
     '피지컬 AI 교육': [['피지컬 AI 교육'], ['피지컬', 'AI 교육']],
     '바이브 코딩과 수업 설계': [['바이브 코딩과 수업 설계'], ['바이브 코딩과', '수업 설계']],
     'AI 스마트 글라스': [['AI 스마트 글라스'], ['AI 스마트', '글라스']],
-    '고교학점제와 대입 개편': [['고교학점제와 대입 개편'], ['고교학점제와', '대입 개편']]
+    '고교학점제와 대입 개편': [['고교학점제와 대입 개편'], ['고교학점제와', '대입 개편']],
+    // 여는 글 두 편
+    '조용한 귀환': [['조용한 귀환'], ['조용한', '귀환']],
+    '우리가 지켜야 할 교실, 우리가 만들어갈 미래 교육': [['우리가 지켜야 할 교실, 우리가 만들어갈 미래 교육'], ['우리가 지켜야 할 교실,', '우리가 만들어갈 미래 교육'], ['우리가 지켜야 할 교실,', '우리가 만들어갈', '미래 교육'], ['우리가 지켜야 할', '교실,', '우리가 만들어갈', '미래 교육']]
   };
   // 문장 속에서도 떨어지면 어색한 말 묶음 (긴 것부터)
   var GLUE = ['대한민국 미래 교육 트렌드', '미래 교육 트렌드가', '미래 교육 트렌드', '현장 교육전문가 30명이', '2027 교실 스포일러', '내년 교실 미리 보기', '키워드 21개 중', '2027 키워드 21', '미리 보기', '이 책에서', '바이브 코딩과', '교육의 정당성', '디자인 씽킹', '생성형 AI와', 'AI 시대의', '미래 교육', '수업 설계', '대입 개편', 'AI 스마트', '고1 자퇴', '슬로 리딩', 'AI 시대', 'AI 교육', '네 번째', '뉴 커먼'];
@@ -466,12 +477,12 @@
   /* ---------- black field: 저자 block ---------- */
   function authorBlock(c, g, x, y, w, h, d, o) {
     o = o || {};
-    var S = g.S, has = !!d.name, label = '저자', big, subs = [];
+    var S = g.S, has = !!d.name, label = d.opener ? d.kwLabel : '저자', big, subs = [];   // 여는 글을 쓴 분은 '여는 글'로 적는다
     if (has) { big = d.name; if (d.org) subs.push({ t: d.org, c: '#C9CACD', w: 500 }); if (d.handle) subs.push({ t: d.handle, c: '#7FDBF6', w: 500 }); }
     else if (d.org || d.handle) { big = d.org || d.handle; if (d.org && d.handle) subs.push({ t: d.handle, c: '#7FDBF6', w: 500 }); }
     else { label = '지은이'; big = TEAM; subs.push({ t: '30명의 현장 교육전문가', c: '#C9CACD', w: 500 }); }
     subs.sep = '#75767C';
-    var kw = o.kw || '', cap = kw ? '키워드' : (label === '지은이' ? PUB : TEAM + ' · ' + PUB);
+    var kw = o.kw || '', cap = kw ? (d.kwLabel || '키워드') : (label === '지은이' ? PUB : TEAM + ' · ' + PUB);
     var leftW = kw ? w * 0.55 : w, padT = S * 0.036, padB = g.story ? S * 0.012 : S * 0.062, q = 1, labS, subS, nameS, fl, g1, g2, total;
     for (; ;) {                                   // 검정 면 높이에 맞을 때까지 조금씩 줄인다
       labS = S * 0.026 * g.ts * q; subS = S * 0.033 * g.ts * q; g1 = S * 0.026 * q; g2 = S * 0.027 * q;
@@ -528,7 +539,8 @@
     if (d.name) segs.push({ t: d.name, c: WH, f: 'd', w: 700, k: 1.1, ls: -0.02 });
     if (d.org) segs.push({ t: d.org, c: '#C9CACD', w: 500 });
     if (land && d.handle) segs.push({ t: d.handle, c: '#7FDBF6', w: 500 });
-    if (!segs.length) segs.push({ t: d.kw ? TEAM : SUB[0] + ' ' + SUB[1], c: '#C9CACD', w: 500 });
+    if (!segs.length) segs.push({ t: d.opener && d.kwSub ? d.kwSub : d.kw ? TEAM : SUB[0] + ' ' + SUB[1], c: '#C9CACD', w: 500 });
+    if (d.opener) segs.unshift({ t: d.kwLabel, c: CY, w: 700 });   // 여는 글: 제목 아래에 '여는 글'을 먼저 적는다
     segs.sep = '#75767C';
     var fl = flow(c, segs, w, S * 0.036 * g.ts, { maxLines: land ? 2 : 1, min: 0.62 });
     var g1 = S * (land ? 0.036 : 0.025), g2 = S * 0.03, room = h - footH - g2 - fl.h - g1;

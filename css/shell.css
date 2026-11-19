@@ -54,6 +54,7 @@
 .sh-tagbrace b{font:300 19px/1 var(--display);margin-top:-2px}
 .sh-tagkw{font:700 clamp(21px,6.4vw,30px)/1.14 var(--display);letter-spacing:-.045em;color:#fff;margin-top:7px;padding-right:34px;text-wrap:balance}
 .sh-tagkw.is-empty{opacity:.55}
+.sh-tagkw.is-long{font-size:clamp(17px,5vw,22px);line-height:1.22;text-wrap:initial}
 .sh-tagspark{position:absolute;right:16px;bottom:15px;font-size:22px;color:var(--ink)}
 .sh-tagbot{background:var(--ink);color:#fff;padding:9px 16px 11px;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 9px;min-height:44px}
 .sh-taglabel{font:500 10px/1 var(--display);letter-spacing:.14em;color:var(--cy);margin-right:2px}
@@ -90,6 +91,7 @@
   .sh-tagcard{grid-column:2;grid-row:1}
   .sh-tagtop{padding:20px 22px 24px}
   .sh-tagkw{font-size:34px;margin-top:12px}
+  .sh-tagkw.is-long{font-size:25px}
   .sh-tagbot{padding:14px 22px 16px}
   .sh-mebtns{grid-column:2;grid-row:2;align-self:start;grid-template-columns:1fr}
 }

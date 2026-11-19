@@ -32,6 +32,19 @@
     { year: 2027, label: '2027', title: '2027 대한민국 미래 교육 트렌드', authors: 30, color: '#00A2D3', pub: '', cover: 'assets/covers/2027' }
   ];
 
+  /* 여는 글 두 편 — 표지 키워드 21개와는 따로 둔다. '내 정보 › 내 키워드' 맨 위에서 직함으로 고른다.
+     그림(assets/kw/o1·o2)은 힉스필드로 표지 그림과 같은 결로 그렸다. */
+  EDU.openers = [
+    { id: 'o1', opener: true, role: '교사크리에이터협회 회장', label: '여는 글', name: '조용한 귀환', sub: 'AI가 답을 줄수록 교사가 중요해지는 이유', tag: '조용한귀환' },
+    { id: 'o2', opener: true, role: '교사크리에이터협회 집필팀장', label: '여는 글', name: '우리가 지켜야 할 교실, 우리가 만들어갈 미래 교육', sub: '', tag: '우리가지켜야할교실' }
+  ];
+  /** 표지 키워드 21개 + 여는 글 두 편에서 id로 찾는다 */
+  EDU.topic = function (id) {
+    var L = ((window.EDU_ASSETS && window.EDU_ASSETS.keywords) || []).concat(EDU.openers), i;
+    for (i = 0; i < L.length; i++) if (L[i].id === id) return L[i];
+    return null;
+  };
+
   /* 키워드 그림 21장 — 표지와 같은 결로 새로 그린 것(투명 배경, 시안 바탕 위에 얹는다) */
   EDU.kwArt = function (id, size) { // size: 'hd' (2048 PNG) | 'pv' (800 WebP)
     return 'assets/kw/' + id + (size === 'hd' ? '.png' : '.webp');

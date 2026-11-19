@@ -30,7 +30,7 @@
       });
       // ----- 키워드 포스터 21 -----
       (P.kw || []).forEach(function (k) {
-        var kw = A.keywords.filter(function (x) { return x.id === k.id; })[0]; if (!kw) return;
+        var kw = EDU.topic(k.id); if (!kw) return;
         var v = variants(k, ['4x5', '1x1', '9x16', '16x9', 'link'], fname(kw.tag));
         if (v.length) add({ id: 'kw-' + k.id, cat: 'kw', title: kw.name, sub: v.length + '가지 크기', v: v, kw: k.id, template: k.template || 'art' });
       });
@@ -41,13 +41,13 @@
         if (bg.length) add({ id: 'bg-' + b.id, cat: 'profile', title: b.title, sub: '카톡 배경', v: bg, template: b.template, fit: 'contain' });
       });
       (P.kw || []).forEach(function (k) {
-        var kw = A.keywords.filter(function (x) { return x.id === k.id; })[0]; if (!kw) return;
+        var kw = EDU.topic(k.id); if (!kw) return;
         var pf = variants(k, ['profile'], fname(kw.tag));
         if (pf.length) add({ id: 'pf-' + k.id, cat: 'profile', title: kw.name, sub: '프사', v: pf, kw: k.id, template: 'art', round: true });
       });
     }
     // ----- 그림 원본 (키워드 그림 21, 투명) -----
-    A.keywords.forEach(function (k) {
+    A.keywords.concat(EDU.openers || []).forEach(function (k) {
       single('art-' + k.id, 'art', k.name, '투명 PNG', { size: 'art', label: '원본', pv: EDU.kwArt(k.id, 'pv'), md: EDU.kwArt(k.id, 'pv'), hd: EDU.kwArt(k.id, 'hd'), w: 2048, h: 2048, filename: fname('그림', k.tag) + '.png' }, { kw: k.id, ground: true, fit: 'contain' });
     });
     // ----- 표지 -----
@@ -65,7 +65,7 @@
     }); });
     MS.forEach(function (M) { if (M !== window.EDU_MOTION_BOOK) (M.items || []).forEach(addMotion); });
     function addMotion(m) {
-      var order = ['4x5', '1x1', '16x9', '9x16'], kw = m.kw ? A.keywords.filter(function (x) { return x.id === m.kw; })[0] : null;
+      var order = ['4x5', '1x1', '16x9', '9x16'], kw = m.kw ? EDU.topic(m.kw) : null;
       var files = (m.files || []).slice().sort(function (x, y) { return order.indexOf(x.size) - order.indexOf(y.size); });
       if (m.kw) files.sort(function (x, y) { return (x.size === '1x1' ? 0 : 1) - (y.size === '1x1' ? 0 : 1); });
       var base = fname('움직이는', kw ? kw.tag : m.title.replace(/\s+/g, ''));
