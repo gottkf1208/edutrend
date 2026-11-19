@@ -183,7 +183,18 @@
           '<span class="sh-linktxt"><strong>' + esc(st.name) + '</strong><small>' + (open ? esc(shortUrl(st.url)) : '서점에서 책 찾기') + '</small></span>' + icon('arrow-up-right') + '</a>' +
         (open ? '<button type="button" class="icon-btn sh-storecopy" data-copyurl="' + esc(st.url) + '" data-store="' + esc(st.name) + '" aria-label="' + esc(st.name) + ' 주소 복사">' + icon('copy') + '</button>' : '') +
       '</div>';
-    }).join('');
+    }).join('') + giftRow();
+  }
+  /** 서점 줄 아래 한 줄: 카카오톡 선물하기 (책을 사는 곳이 아니라 선물로 보내는 곳) */
+  function giftRow() {
+    var gf = EDU.book.gift;
+    if (!gf || !gf.url) return '';
+    return '<div class="sh-store sh-giftrow">' +
+      '<a class="sh-link is-open" href="' + esc(gf.url) + '" target="_blank" rel="noopener">' +
+        '<span class="sh-linkico sh-giftico">' + icon('gift') + '</span>' +
+        '<span class="sh-linktxt"><strong>' + esc(gf.name) + '<em>선물로 보내기</em></strong><small>' + esc(shortUrl(gf.url)) + '</small></span>' + icon('arrow-up-right') + '</a>' +
+      '<button type="button" class="icon-btn sh-storecopy" data-copyurl="' + esc(gf.url) + '" data-store="' + esc(gf.name) + '" aria-label="' + esc(gf.name) + ' 주소 복사">' + icon('copy') + '</button>' +
+    '</div>';
   }
   function allStoreText() { return EDU.book.stores.filter(function (st) { return st.url; }).map(function (st) { return st.name + ' ' + st.url; }).join('\n'); }
   /** 서점 줄의 복사 단추 · '세 곳 주소 복사' 단추 */

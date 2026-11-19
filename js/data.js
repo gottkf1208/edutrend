@@ -17,6 +17,8 @@
        교보문고·알라딘 책 페이지도 열렸다(2026-11-19). search는 책 페이지가 없을 때 쓰는 검색 주소. */
     buy: { store: 'YES24', url: 'https://m.yes24.com/goods/detail/201309372' },
     icon: 'assets/icon/book-2027-160.png',
+    /* 카카오톡 선물하기 상품 페이지 (2026-11-19 확인) */
+    gift: { name: '카카오톡 선물하기', url: 'https://gift.kakao.com/product/14661859' },
     stores: [
       { id: 'yes24', name: 'YES24', url: 'https://m.yes24.com/goods/detail/201309372', search: 'https://www.yes24.com/Product/Search?query=' + encodeURIComponent('2027 대한민국 미래 교육 트렌드') },
       { id: 'kyobo', name: '교보문고', url: 'https://product.kyobobook.co.kr/detail/S000222023442', search: 'https://search.kyobobook.co.kr/search?keyword=' + encodeURIComponent('2027 대한민국 미래 교육 트렌드 뜨인돌') },

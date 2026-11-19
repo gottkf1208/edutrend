@@ -31,7 +31,8 @@
     { id: 'art', name: '키워드 그림', type: 'image/png' },
     { id: 'quote', name: '한 문장', type: 'image/png' },
     { id: 'shelf', name: '네 권의 서가', type: 'image/png' },
-    { id: 'bingo', name: '키워드 빙고', type: 'image/png' }
+    { id: 'bingo', name: '키워드 빙고', type: 'image/png' },
+    { id: 'gift', name: '선물하기', type: 'image/png' }
   ];
   var TABS = [['size', '크기'], ['design', '디자인'], ['show', '표시']];
   var MASKS = [['sq', '네모'], ['kakao', '카톡'], ['insta', '인스타']];
@@ -138,6 +139,7 @@
       else if (!d.kw && !g.pf) jobs.book = getImg('assets/covers/book3d' + (hd ? '.png' : '.webp'), pl);
     }
     if (tid === 'quote') jobs.book = getImg('assets/covers/book3d' + (hd ? '.png' : '.webp'), pl);
+    if (tid === 'gift') jobs.c2027 = getImg('assets/covers/2027' + (hd ? '.jpg' : '.webp'), pl);
     if (tid === 'shelf') COVERS.forEach(function (cv) { jobs['c' + cv.y] = getImg('assets/covers/' + cv.y + (hd ? '.jpg' : '.webp'), pl); });
     var keys = Object.keys(jobs);
     return Promise.all(keys.map(function (k) { return jobs[k]; })).then(function (res) { keys.forEach(function (k, i) { out[k] = res[i]; }); return out; });
@@ -674,6 +676,73 @@
     }
   }
 
+  /* ---------- 6. 선물하기: 리본을 올린 책 — 카카오톡 선물하기에서 책을 보낼 수 있다는 소식 ---------- */
+  var GIFT_HEAD = '카톡 선물하기에도 있어요', GIFT_SUB = '고마운 분께 책 한 권 보내 보세요';
+  var GIFT_BREAKS = [[GIFT_HEAD], ['카톡 선물하기에도', '있어요'], ['카톡', '선물하기에도', '있어요']];
+  /** 리본 매듭. (x, y)는 매듭 한가운데, u는 고리 하나의 길이쯤 */
+  function bow(c, x, y, u, rot) {
+    c.save(); c.translate(x, y); c.rotate((rot || 0) * Math.PI / 180); c.scale(u, u);
+    c.lineJoin = 'round'; c.lineCap = 'round'; c.lineWidth = 0.05; c.strokeStyle = INK; c.fillStyle = WH;
+    [1, -1].forEach(function (sg) {               // 꼬리 두 가닥: 책 윗여백만 살짝 덮는다
+      c.beginPath(); c.moveTo(sg * 0.08, -0.06); c.lineTo(sg * 1.04, 0.15); c.lineTo(sg * 0.87, 0.27); c.lineTo(sg * 0.98, 0.45); c.lineTo(sg * 0.02, 0.19); c.closePath(); c.fill(); c.stroke();
+    });
+    [1, -1].forEach(function (sg) {               // 고리 두 개
+      c.beginPath(); c.moveTo(0, 0);
+      c.bezierCurveTo(sg * 0.3, -0.82, sg * 1.3, -0.86, sg * 1.24, -0.2);
+      c.bezierCurveTo(sg * 1.2, 0.3, sg * 0.42, 0.2, 0, 0); c.closePath(); c.fill(); c.stroke();
+      c.beginPath(); c.moveTo(sg * 0.2, -0.1); c.quadraticCurveTo(sg * 0.62, -0.36, sg * 0.92, -0.26); c.stroke();
+    });
+    roundRect(c, -0.19, -0.25, 0.38, 0.46, 0.11); c.fill(); c.stroke();
+    c.restore();
+  }
+  /** 책 한 권에 리본을 올린다. 표지는 가리지 않는다(리본은 책 위쪽 가장자리에 걸친다). 책이 놓인 자리를 돌려준다 */
+  function giftScene(c, im, x, y, w, h, o) {
+    o = o || {};
+    var cv = COVERS[3], UP = 0.16, bh = Math.min(h / (1 + UP), w * (o.fw || 0.56) / cv.ar), bw = bh * cv.ar;
+    var cx = x + w / 2, by = y + (h - bh * (1 + UP)) / 2 + bh * UP, u = bw * 0.215;
+    bookAt(c, im.c2027, cv, cx - bw / 2, by, bw, bh, bw * 0.02);
+    bow(c, cx, by - u * 0.22, u, -4);
+    if (!o.plain) {
+      sparkle(c, cx - bw * 0.5 - bw * 0.24, by + bh * 0.33, bw * 0.105, WH);
+      sparkle(c, cx + bw * 0.5 + bw * 0.2, by + bh * 0.16, bw * 0.07, INK);
+      sparkle(c, cx + bw * 0.5 + bw * 0.27, by + bh * 0.62, bw * 0.045, WH);
+    }
+    return { x: cx - bw / 2, y: by, w: bw, h: bh };
+  }
+  function tGift(c, g, d, im) {
+    if (g.pf) return pfGift(c, g, im);
+    var W = g.W, H = g.H, S = g.S, m = g.m, cw = W - 2 * m;
+    var split = Math.round(H * (g.kbg ? 0.88 : g.story ? 0.685 : g.land ? 0.665 : 0.7));
+    rect(c, 0, 0, W, split, CY); rect(c, 0, split, W, H - split, INK);
+    var hd, bb;
+    if (g.land || g.id === '1x1') {                 // 가로형·정사각: 왼쪽 글, 오른쪽 책
+      var sq = !g.land, scW = Math.round(cw * (sq ? 0.5 : 0.36)), scX = W - m - scW, colW = scX - m - S * 0.04, scTop = m * 0.75;
+      giftScene(c, im, scX, scTop, scW, split - scTop - S * 0.045, { fw: sq ? 0.8 : 0.62, plain: sq });
+      bb = braceBlock(c, m, m, [GIFT_SUB], S * 0.033 * g.ts, INK, colW, 'left');
+      var top = m + bb.h + S * 0.045, bot = split - S * 0.055;
+      hd = fitChoices(c, GIFT_BREAKS, { maxW: colW, maxH: bot - top, maxLines: 3, minLines: sq ? 3 : 2, sizeMax: S * 0.17, reserve: sq ? 0 : 1.25 });
+      var L = drawHead(c, hd, m, top + (bot - top - hd.h) / 2, 'left'), r = L.size * 0.34;
+      if (!sq) { sparkle(c, L.x1 + L.size * 0.3 + r, L.cy - L.size * 0.08, r, WH); sparkle(c, L.x1 + L.size * 0.3 + r * 2.5, L.cy + L.size * 0.3, r * 0.5, INK); }
+      authorBlock(c, g, m, split, cw, H - split, d, { kw: d.kw });
+      return;
+    }
+    bb = braceBlock(c, W / 2, g.top, [GIFT_SUB], S * 0.035, INK, cw);
+    var top2 = g.top + bb.h + S * 0.05, bot2 = g.kbg ? H - g.bot : split - S * 0.05, fl = null, gap = S * 0.05;
+    if (g.kbg) { fl = flow(c, authorSegs(d, 'cy', { kw: true }), cw, S * 0.037, { maxLines: 2, min: 0.7, one: 0.9 }); bot2 -= fl.h + S * 0.045; }
+    var two = g.story;
+    hd = fitChoices(c, GIFT_BREAKS, { maxW: cw, maxH: (bot2 - top2) * 0.36, maxLines: two ? 2 : 1, minLines: two ? 2 : 1, sizeMax: S * 0.105 });
+    var sceneH = bot2 - top2 - hd.h - gap;
+    drawHead(c, hd, W / 2, top2, 'center');
+    giftScene(c, im, m, top2 + hd.h + gap, cw, sceneH);
+    if (g.kbg) drawFlow(c, fl, W / 2, H - g.bot - fl.h, 'center');
+    else authorBlock(c, g, m, split, cw, (g.story ? H - g.bot : H) - split, d, { kw: d.kw });
+  }
+  function pfGift(c, g, im) {                       // 프사: 리본 올린 책 한 권
+    var W = g.W;
+    rect(c, 0, 0, W, g.H, CY);
+    giftScene(c, im, W * 0.2, W * 0.17, W * 0.6, W * 0.66, { fw: 0.9 });
+  }
+
   /* 키워드 빙고: 5×5 — 표지 키워드 21개 + 네 귀퉁이 별. 스토리에 올려 '아는 키워드에 동그라미'를 받는다 */
   function tBingo(c, g, d) {
     if (g.pf) return pfCover(c, g);
@@ -723,14 +792,14 @@
     else drawFlow(c, fl, W / 2, gy + gs + S * 0.04, 'center');
   }
 
-  var DRAW = { cover: tCover, art: tArt, quote: tQuote, shelf: tShelf, bingo: tBingo };
+  var DRAW = { cover: tCover, art: tArt, quote: tQuote, shelf: tShelf, bingo: tBingo, gift: tGift };
 
   /* ---------- render / export ---------- */
   function render(opts) {
     opts = opts || {};
     var r = ratioOf(opts.ratio || state.ratio), t = tplOf(opts.template || state.template), g = geomOf(r), d = model(opts, g.pf);
     var scale = opts.scale > 0 ? opts.scale : 1, hd = opts.hd != null ? opts.hd : r.w * scale > 1300;
-    return Promise.all([loadFonts(TITLE + HEAD + d.name + d.org + d.handle + d.kw + d.line), loadSources(t.id, g, d, hd, opts.pool || (hd ? {} : pool))]).then(function (res) {
+    return Promise.all([loadFonts(TITLE + HEAD + GIFT_HEAD + GIFT_SUB + d.name + d.org + d.handle + d.kw + d.line), loadSources(t.id, g, d, hd, opts.pool || (hd ? {} : pool))]).then(function (res) {
       var cv = document.createElement('canvas');
       cv.width = Math.max(1, Math.round(r.w * scale)); cv.height = Math.max(1, Math.round(r.h * scale));
       var c = cv.getContext('2d');

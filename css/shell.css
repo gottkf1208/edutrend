@@ -166,6 +166,11 @@
 .sh-storecopy{flex:none;width:40px;height:40px;color:var(--ink-2);border-radius:10px}
 .sh-storecopy .i{width:18px;height:18px}
 .sh-storecopy:hover{background:var(--canvas);color:var(--ink)}
+/* 서점 세 곳 아래: 카카오톡 선물하기 */
+.sh-store.sh-giftrow .sh-linkico.sh-giftico{background:var(--ink);box-shadow:none;color:#fff}
+.sh-giftico .i{width:19px;height:19px}
+.sh-giftrow .sh-linktxt strong{display:flex;align-items:center;gap:6px;min-width:0}
+.sh-giftrow .sh-linktxt em{flex:none;font-style:normal;font-size:10.5px;font-weight:650;line-height:1;padding:3px 6px 2px;border-radius:999px;background:rgba(0,162,211,.14);color:#00708F}
 .sh-h3row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px}
 .sh-h3row .sh-h3{margin:0}
 .sh-buysheet{padding:6px 18px 20px}

@@ -81,7 +81,7 @@
     kw = topicOf(kw);
     return {
       '이름': clean(p.name), '소속': clean(p.org), '키워드': kw ? clean(kw.name) : '', '한줄': sentence(p.line),
-      '아이디': clean(p.handle), '주소': link, '링크': link || C.linkFallback, '책': C.book,
+      '아이디': clean(p.handle), '주소': link, '링크': link || C.linkFallback, '책': C.book, '선물': ((EDU.book || {}).gift || {}).url || '',
       '표지': kw && kw.id !== 'custom' && !kw.opener ? '1' : '', '여는글': kw && kw.opener ? '1' : ''
     };
   }
