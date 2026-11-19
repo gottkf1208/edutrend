@@ -150,18 +150,23 @@
 .dock a.is-on::before{content:"";position:absolute;top:-1px;left:50%;width:24px;height:3px;margin-left:-12px;border-radius:0 0 3px 3px;background:var(--cy)}
 @media(min-width:900px){.dock{display:none}}
 
-/* ---------- 책 보러 가기 ---------- */
-.sh-buy{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex:none;border-radius:999px;color:var(--ink)}
-.sh-buy span{display:none}
-.sh-buy .bk-ico{width:28px;height:28px}
+/* ---------- 책 구매 링크 ---------- */
+.sh-buy{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 11px 0 6px;flex:none;border-radius:999px;border:1px solid var(--line-2);background:#fff;color:var(--ink);font-size:12.5px;font-weight:700;letter-spacing:-.02em;white-space:nowrap;margin-right:2px}
+.sh-buy i{display:none;font-style:normal}
+.sh-buy .bk-ico{width:22px;height:22px}
 .sh-link.is-open .sh-linkico{background:#fff;box-shadow:inset 0 0 0 1px var(--line-2)}
 .sh-linkico .bk-ico{width:26px;height:26px}
+.sh-buyurl{margin:8px 0 10px}
+.sh-buyurl code{font-size:12.5px}
 .sh-footbuy{display:inline-flex;align-items:center;gap:6px;color:inherit;vertical-align:middle;margin-top:-2px}
 .sh-footbuy .bk-ico{width:18px;height:18px}
-.sh-footbuy:hover b{text-decoration:underline;text-underline-offset:3px}
+.sh-footbuy em{font-style:normal;display:inline-flex;align-items:center;gap:2px;color:var(--cy);font-weight:700;margin-left:2px}
+.sh-footbuy em .i{width:12px;height:12px}
+.sh-footbuy:hover b,.sh-footbuy:hover em{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:345px){ .sh-buy{padding:0 9px 0 5px;font-size:12px} .sh-name span{display:none} }
 @media(min-width:900px){
-  .sh-buy{width:auto;height:36px;padding:0 14px 0 8px;gap:6px;margin:0 2px 0 6px;border:1px solid var(--line-2);background:#fff;font-size:13px;font-weight:700;white-space:nowrap;transition:border-color .15s}
-  .sh-buy span{display:inline}
+  .sh-buy{height:36px;padding:0 14px 0 8px;gap:6px;margin:0 2px 0 6px;font-size:13px;transition:border-color .15s}
+  .sh-buy i{display:inline}
   .sh-buy .bk-ico{width:24px;height:24px}
   .sh-buy:hover{border-color:var(--ink)}
 }

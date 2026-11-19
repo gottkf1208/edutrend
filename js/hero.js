@@ -74,7 +74,7 @@
         '</div>' +
         '<div class="hero-cta">' +
           '<button type="button" class="btn btn-dark hero-go">내 홍보 카드 만들기' + icon('arrow-right') + '</button>' +
-          '<a class="btn btn-white hero-buy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener">' + bookImg() + '<span>책 보러 가기</span></a>' +
+          '<a class="btn btn-white hero-buy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener">' + bookImg() + '<span>책 구매 링크</span></a>' +
           '<button type="button" class="btn btn-white hero-get" aria-label="표지 받기">' + icon('download') + '<span>표지 받기</span></button>' +
         '</div>' +
       '</div>' +
@@ -295,7 +295,7 @@
     (EDU.backlist || []).forEach(function (x) { if (x.year === b.year) back = x; });
     var sub = '<span class="hero-nb">' + esc(s.authors) + '명의 현장 교육전문가</span>' + (s.pub ? ' · <span class="hero-nb">' + esc(s.pub) + '</span>' : '');
     var act = b.year === 2027
-      ? '<a class="hero-capact" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener">' + bookImg() + '책 보러 가기</a>'
+      ? '<a class="hero-capact" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener">' + bookImg() + '구매 링크' + icon('arrow-up-right') + '</a>'
       : (back && back.yes24 ? '<a class="hero-capact" href="' + esc(back.yes24) + '" target="_blank" rel="noopener">서점에서 보기' + icon('arrow-up-right') + '</a>' : '');
     cap.innerHTML = '<i class="hero-capdot" style="--c:' + esc(s.color) + '"></i>' +
       '<div class="hero-captxt"><strong>' + esc(s.title) + '</strong><span>' + sub + '</span></div>' + act;

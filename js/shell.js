@@ -23,7 +23,7 @@
         return '<a href="#' + t[0] + '" data-go="' + t[0] + '" data-tab="' + t[0] + '">' + t[2] + '</a>';
       }).join('') + '</nav>' +
       '<div class="sh-actions">' +
-        '<a class="sh-buy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener" aria-label="' + esc(EDU.book.buy.store) + '에서 책 보러 가기">' + bookIco() + '<span>책 보러 가기</span></a>' +
+        '<a class="sh-buy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener" aria-label="' + esc(EDU.book.buy.store) + ' 책 구매 링크">' + bookIco() + '<span><i>책 </i>구매 링크</span></a>' +
         '<button type="button" class="icon-btn sh-help" id="helpBtn" aria-label="처음이라면">' + icon('help') + '</button>' +
         '<button type="button" class="btn btn-dark btn-small sh-cover" id="coverBtn">' + icon('download') + '<span>표지 받기</span></button>' +
       '</div>';
@@ -196,7 +196,9 @@
             '<button type="button" role="tab" data-lp="share" aria-selected="false">나누기</button>' +
           '</div></div>' +
         '<div class="sh-linkpanes">' +
-          '<div class="card sh-pane is-on" data-pane="buy"><h3 class="sh-h3">책 사러 가는 길</h3>' + stores +
+          '<div class="card sh-pane is-on" data-pane="buy"><h3 class="sh-h3">책 구매 링크</h3>' +
+            '<div class="sh-share sh-buyurl"><code>' + esc(b.buy.url.replace(/^https?:\/\//, '')) + '</code><button type="button" class="btn btn-dark btn-small" id="buyCopy">' + icon('copy') + '복사</button></div>' +
+            stores +
             (b.stores.some(function (st) { return st.url; }) ? '' : '<p class="note sh-storenote">지금은 서점 검색 결과로 이어져요. 책 페이지가 열리면 그 주소로 바로 가게 바꿔 둘게요.</p>') +
             '<h3 class="sh-h3 sh-h3b">먼저 나온 세 권</h3><div class="sh-backs">' + back + '</div></div>' +
           '<div class="card sh-pane" data-pane="acc"><h3 class="sh-h3">공식 계정</h3><p class="note sh-accnote">글에 태그하거나 소식을 확인할 때 쓰세요.</p>' + accounts + '</div>' +
@@ -224,6 +226,7 @@
       if (a && EDU.env.mobile) { e.preventDefault(); U.openApp(a.getAttribute('data-app'), a.href); }
     });
     $('#copySite').addEventListener('click', function () { U.copy(EDU.site, '주소를 복사했어요'); });
+    $('#buyCopy').addEventListener('click', function () { U.copy(EDU.book.buy.url, '구매 링크를 복사했어요'); });
     $('#shareSite').addEventListener('click', function () {
       var data = { title: '2027 대한민국 미래 교육 트렌드 · 저자 홍보 키트', text: '2027 미래 교육 트렌드 저자 홍보 키트예요. 내 이름 넣은 카드랑 글감을 바로 받을 수 있어요.', url: EDU.site };
       if (navigator.share) navigator.share(data).catch(function () {});
@@ -234,7 +237,7 @@
   /* ---------------- footer bar (desktop) ---------------- */
   function footer() {
     $('#siteFooter').innerHTML =
-      '<span><a class="sh-footbuy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener">' + bookIco() + '<b>2027 대한민국 미래 교육 트렌드</b></a> · 미래 교육 집필팀 · 뜨인돌</span>' +
+      '<span><a class="sh-footbuy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener">' + bookIco() + '<b>2027 대한민국 미래 교육 트렌드</b><em>구매 링크' + icon('arrow-up-right') + '</em></a> · 미래 교육 집필팀 · 뜨인돌</span>' +
       '<span class="sh-footsp"></span>' +
       '<span>저자 홍보 키트 · 만든 사람 두목쿼카</span>' +
       '<button type="button" class="sh-egghunt js-eggcount"></button>' +
