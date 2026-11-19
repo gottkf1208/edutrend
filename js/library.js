@@ -194,6 +194,7 @@
           '<p class="lt-meta">' + T.w + '×' + T.h + ' · ' + T.secs + '초 · ' + U.fmtBytes(T.bytes) + ' · 소리 있음</p>' +
           '<button type="button" class="btn btn-cy btn-block" data-act="trailer-save">' + icon('download') + '<span>고화질 원본 저장</span></button>' +
           '<p class="lt-note">저장한 영상을 인스타 릴스나 피드에 그대로 올리면 돼요. 용량이 커서 와이파이에서 받는 걸 권해요.</p>' +
+          '<a class="lt-buy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener"><img class="bk-ico" src="' + esc(EDU.book.icon) + '" alt="" width="160" height="160">' + esc(EDU.book.buy.store) + '에서 책 보기' + icon('arrow-up-right') + '</a>' +
         '</div>' +
       '</div>';
   }

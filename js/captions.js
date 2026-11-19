@@ -6,6 +6,8 @@
   var EDU = (window.EDU = window.EDU || {});
   var C = window.EDU_COPY || {};
   var KEY = 'edutrend.captions.v1';
+  /** 저자가 구매 링크를 비워 두면 쓰는 책 주소(YES24 책 페이지) */
+  function buyUrl() { var b = EDU.book || {}; return (b.buy && b.buy.url) || ''; }
 
   /* ================================================================
      1. 글 조립 (화면 없이도 돈다 — build/captions_dump.js가 그대로 불러 쓴다)
@@ -66,7 +68,7 @@
   }
   /** 문장에 넣을 값들. 비어 있는 값은 '' → 그 값을 쓰는 문장이 빠진다. */
   function varsOf(profile, kw) {
-    var p = profile || {}, link = clean(p.link);
+    var p = profile || {}, link = clean(p.link) || buyUrl();   // 비워 두면 YES24 책 주소
     kw = topicOf(kw);
     return {
       '이름': clean(p.name), '소속': clean(p.org), '키워드': kw ? clean(kw.name) : '', '한줄': sentence(p.line),
@@ -199,7 +201,7 @@
     var groups = tagGroups(profile, kw, opts.custom || S.custom);
     var tags = selectedTags(P.id, groups, opts.tagOv || S.tagOv);
     if (P.id === 'linkedin' && C.linkedinEn) {            // 링크드인은 영어로
-      var E = C.linkedinEn, kwEn = kw ? (C.kwEn[kw.id] || '‘' + clean(kw.name) + '’') : '', url = clean(profile.link);
+      var E = C.linkedinEn, kwEn = kw ? (C.kwEn[kw.id] || '‘' + clean(kw.name) + '’') : '', url = clean(profile.link) || buyUrl();
       n = E.variants.length; i = ((parseInt(variant, 10) || 0) % n + n) % n;
       text = E.variants[i].map(function (ln) {
         var t = typeof ln === 'string' ? ln : (kwEn ? ln[0] : ln[1]);
@@ -272,7 +274,7 @@
     reels: function () { return { app: 'instagram://camera', web: 'https://www.instagram.com/' }; },
     threads: function (t) { return { web: 'https://www.threads.net/intent/post?text=' + enc(t) }; },
     x: function (t) { return { web: 'https://x.com/intent/post?text=' + enc(t) }; },
-    fb: function (t, p) { return { web: 'https://www.facebook.com/sharer/sharer.php?u=' + enc(clean(p.link) || EDU.site) }; },
+    fb: function (t, p) { return { web: 'https://www.facebook.com/sharer/sharer.php?u=' + enc(clean(p.link) || buyUrl() || EDU.site) }; },
     blog: function () { return { web: 'https://blog.naver.com/GoBlogWrite.naver' }; },
     band: function (t) { return { web: 'https://band.us/plugin/share?body=' + enc(t) + '&route=' + enc(EDU.site) }; },
     linkedin: function (t) { return { web: 'https://www.linkedin.com/feed/?shareActive=true&text=' + enc(t) }; }

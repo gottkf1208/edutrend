@@ -176,3 +176,6 @@ dialog[open]{animation:dlgIn .26s var(--ease)}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
   .reveal{opacity:1;transform:none}
 }
+
+/* ---------- 책 아이콘(책 보러 가기 링크) ---------- */
+.bk-ico{width:1.5em;height:1.5em;flex:none;object-fit:contain;display:inline-block;vertical-align:middle}

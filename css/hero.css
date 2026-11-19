@@ -198,3 +198,17 @@ dialog.kw-sheet{background:var(--ink);color:#fff;width:min(720px,100vw);max-heig
   .kw-rule-b{display:block;left:calc((100% - 82px)/3*2 + 61.5px)}
   .kw-none{margin-top:16px}
 }
+
+/* ---------- 책 보러 가기(홈) ---------- */
+.hero-buy{flex:1.2;gap:6px;white-space:nowrap}
+.hero-buy .bk-ico{width:24px;height:24px;margin-left:-2px}
+.hero-cta .hero-get{flex:none;width:48px;padding-left:0;padding-right:0}
+.hero-get span{display:none}
+.is-wide .hero-cta .hero-get{width:auto;padding-left:20px;padding-right:20px}
+.is-wide .hero-get span{display:inline}
+.hero-capact .bk-ico{width:20px;height:20px}
+@media(max-width:345px){
+  .hero-buy span{display:none}
+  .hero-cta .hero-buy{flex:none;width:48px;padding-left:0;padding-right:0}
+  .hero-buy .bk-ico{margin-left:0}
+}

@@ -23,6 +23,7 @@
         return '<a href="#' + t[0] + '" data-go="' + t[0] + '" data-tab="' + t[0] + '">' + t[2] + '</a>';
       }).join('') + '</nav>' +
       '<div class="sh-actions">' +
+        '<a class="sh-buy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener" aria-label="' + esc(EDU.book.buy.store) + '에서 책 보러 가기">' + bookIco() + '<span>책 보러 가기</span></a>' +
         '<button type="button" class="icon-btn sh-help" id="helpBtn" aria-label="처음이라면">' + icon('help') + '</button>' +
         '<button type="button" class="btn btn-dark btn-small sh-cover" id="coverBtn">' + icon('download') + '<span>표지 받기</span></button>' +
       '</div>';
@@ -101,7 +102,7 @@
               '<div class="sh-step" data-pane="2">' +
                 '<div class="field"><label for="pfHandle">SNS 아이디</label><input class="input" id="pfHandle" name="handle" maxlength="32" placeholder="@아이디" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next"></div>' +
                 '<div class="field"><label for="pfLine">한 줄 소개</label><input class="input" id="pfLine" name="line" maxlength="60" placeholder="예: 로봇을 가르치는 아이들이 2027년 교실의 주인공이에요" enterkeyhint="next"><span class="hint">‘한 문장’ 카드와 글에 들어가요.</span></div>' +
-                '<div class="field"><label for="pfLink">책 구매 링크</label><input class="input" id="pfLink" name="link" type="url" inputmode="url" maxlength="300" placeholder="https://" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><span class="hint">비워 두면 글에 ‘서점에서 검색’ 문구가 들어가요.</span></div>' +
+                '<div class="field"><label for="pfLink">책 구매 링크</label><input class="input" id="pfLink" name="link" type="url" inputmode="url" maxlength="300" placeholder="https://" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><span class="hint">비워 두면 YES24 책 주소가 들어가요.</span></div>' +
               '</div>' +
             '</div>' +
             '<div class="sh-formfoot"><span class="sh-saved" id="pfSaved" aria-live="polite"></span><button type="button" class="btn btn-ghost btn-small" id="pfReset">' + icon('refresh') + '비우기</button></div>' +
@@ -165,12 +166,16 @@
     fill(EDU.getProfile());
   }
 
+  /** 책 아이콘(힉스필드로 만든 2027 책 그림) — '책 보러 가기' 링크마다 붙인다 */
+  function bookIco() { return '<img class="bk-ico" src="' + esc(EDU.book.icon) + '" alt="" width="160" height="160" decoding="async">'; }
+  EDU.bookIco = bookIco;
+
   /* ---------------- 링크 ---------------- */
   function links() {
     var s = $('#links'), b = EDU.book;
     var stores = b.stores.map(function (st) {
-      return '<a class="sh-link" href="' + esc(st.url || st.search) + '" target="_blank" rel="noopener">' +
-        '<span class="sh-linkico">' + icon('cart') + '</span><span class="sh-linktxt"><strong>' + esc(st.name) + '</strong><small>' + (st.url ? '책 페이지로 가기' : '서점에서 책 찾기') + '</small></span>' + icon('arrow-up-right') + '</a>';
+      return '<a class="sh-link' + (st.url ? ' is-open' : '') + '" href="' + esc(st.url || st.search) + '" target="_blank" rel="noopener">' +
+        '<span class="sh-linkico">' + (st.url ? bookIco() : icon('cart')) + '</span><span class="sh-linktxt"><strong>' + esc(st.name) + '</strong><small>' + (st.url ? '책 페이지로 가기' : '서점에서 책 찾기') + '</small></span>' + icon('arrow-up-right') + '</a>';
     }).join('');
     var accounts = EDU.accounts.map(function (a) {
       return '<a class="sh-link" href="' + esc(a.url) + '" target="_blank" rel="noopener"' + (a.app ? ' data-app="' + esc(a.app) + '"' : '') + '>' +
@@ -229,7 +234,7 @@
   /* ---------------- footer bar (desktop) ---------------- */
   function footer() {
     $('#siteFooter').innerHTML =
-      '<span><b>2027 대한민국 미래 교육 트렌드</b> · 미래 교육 집필팀 · 뜨인돌</span>' +
+      '<span><a class="sh-footbuy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener">' + bookIco() + '<b>2027 대한민국 미래 교육 트렌드</b></a> · 미래 교육 집필팀 · 뜨인돌</span>' +
       '<span class="sh-footsp"></span>' +
       '<span>저자 홍보 키트 · 만든 사람 두목쿼카</span>' +
       '<button type="button" class="sh-egghunt js-eggcount"></button>' +

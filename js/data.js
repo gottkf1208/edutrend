@@ -13,10 +13,13 @@
     authors: 30,
     publisher: '뜨인돌',
     color: '#00A2D3',
-    /* 서점 링크: 2026-11-17 기준 아직 등록 전. 등록되면 여기 주소만 넣으면 사이트 전체에 반영된다. */
+    /* 서점 링크: YES24 책 페이지가 열렸다(2026-11-19). buy = 사이트 곳곳의 '책 보러 가기'와 글감의 기본 링크.
+       교보문고·알라딘은 아직 검색 결과로 이어진다. 책 페이지가 열리면 url만 채우면 된다. */
+    buy: { store: 'YES24', url: 'https://m.yes24.com/goods/detail/201309372' },
+    icon: 'assets/icon/book-2027-160.png',
     stores: [
+      { id: 'yes24', name: 'YES24', url: 'https://m.yes24.com/goods/detail/201309372', search: 'https://www.yes24.com/Product/Search?query=' + encodeURIComponent('2027 대한민국 미래 교육 트렌드') },
       { id: 'kyobo', name: '교보문고', url: '', search: 'https://search.kyobobook.co.kr/search?keyword=' + encodeURIComponent('2027 대한민국 미래 교육 트렌드 뜨인돌') },
-      { id: 'yes24', name: 'YES24', url: '', search: 'https://www.yes24.com/Product/Search?query=' + encodeURIComponent('2027 대한민국 미래 교육 트렌드') },
       { id: 'aladin', name: '알라딘', url: '', search: 'https://www.aladin.co.kr/search/wsearchresult.aspx?SearchWord=' + encodeURIComponent('2027 대한민국 미래 교육 트렌드') }
     ]
   };
