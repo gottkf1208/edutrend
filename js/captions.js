@@ -8,6 +8,15 @@
   var KEY = 'edutrend.captions.v1';
   /** 저자가 구매 링크를 비워 두면 쓰는 책 주소(YES24 책 페이지) */
   function buyUrl() { var b = EDU.book || {}; return (b.buy && b.buy.url) || ''; }
+  /** 책 페이지가 열린 서점들(YES24 · 교보문고 · 알라딘) */
+  function openStores() { return ((EDU.book || {}).stores || []).filter(function (st) { return st.url; }); }
+  var STORE_EN = { yes24: 'YES24', kyobo: 'Kyobo', aladin: 'Aladin' };
+  /** 저자가 구매 링크를 비워 두면 넣는 주소. one이면 대표 주소 하나, 아니면 서점마다 한 줄씩 */
+  function buyLinks(one, en) {
+    var L = openStores();
+    if (one || L.length < 2) return buyUrl() || (L[0] ? L[0].url : '');
+    return L.map(function (st) { return (en ? (STORE_EN[st.id] || st.name) : st.name) + ' ' + st.url; }).join('\n');
+  }
 
   /* ================================================================
      1. 글 조립 (화면 없이도 돈다 — build/captions_dump.js가 그대로 불러 쓴다)
@@ -67,8 +76,8 @@
     return kw;
   }
   /** 문장에 넣을 값들. 비어 있는 값은 '' → 그 값을 쓰는 문장이 빠진다. */
-  function varsOf(profile, kw) {
-    var p = profile || {}, link = clean(p.link) || buyUrl();   // 비워 두면 YES24 책 주소
+  function varsOf(profile, kw, one) {
+    var p = profile || {}, link = clean(p.link) || buyLinks(one);   // 비워 두면 서점 세 곳 주소(one이면 대표 하나)
     kw = topicOf(kw);
     return {
       '이름': clean(p.name), '소속': clean(p.org), '키워드': kw ? clean(kw.name) : '', '한줄': sentence(p.line),
@@ -196,12 +205,14 @@
     var P = platformOf(platformId || S.platform), M = moodOf(moodId || S.mood);
     var list = ((C.captions[M.id] || {})[P.len]) || [];
     var n = list.length || 1, i = ((parseInt(variant, 10) || 0) % n + n) % n;
-    var vars = varsOf(profile, kw), v = list[i], text = '';
-    if (v) text = P.len === 'long' ? longText(v, vars, emoji) : shortOrMedium(v, vars, emoji, P.len === 'short' ? '\n' : '\n\n');
+    var v = list[i], text = '';
+    function make(one) { var vars = varsOf(profile, kw, one); return v ? (P.len === 'long' ? longText(v, vars, emoji) : shortOrMedium(v, vars, emoji, P.len === 'short' ? '\n' : '\n\n')) : ''; }
     var groups = tagGroups(profile, kw, opts.custom || S.custom);
     var tags = selectedTags(P.id, groups, opts.tagOv || S.tagOv);
+    text = make(false);
+    if (P.id === 'x' && xWeight(join(text, tags.join(' '))) > 280) text = make(true);   // X는 280자 — 넘치면 대표 주소 하나만
     if (P.id === 'linkedin' && C.linkedinEn) {            // 링크드인은 영어로
-      var E = C.linkedinEn, kwEn = kw ? (C.kwEn[kw.id] || '‘' + clean(kw.name) + '’') : '', url = clean(profile.link) || buyUrl();
+      var E = C.linkedinEn, kwEn = kw ? (C.kwEn[kw.id] || '‘' + clean(kw.name) + '’') : '', url = clean(profile.link) || buyLinks(false, true);
       n = E.variants.length; i = ((parseInt(variant, 10) || 0) % n + n) % n;
       text = E.variants[i].map(function (ln) {
         var t = typeof ln === 'string' ? ln : (kwEn ? ln[0] : ln[1]);

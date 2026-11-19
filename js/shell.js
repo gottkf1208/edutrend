@@ -23,7 +23,7 @@
         return '<a href="#' + t[0] + '" data-go="' + t[0] + '" data-tab="' + t[0] + '">' + t[2] + '</a>';
       }).join('') + '</nav>' +
       '<div class="sh-actions">' +
-        '<a class="sh-buy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener" aria-label="' + esc(EDU.book.buy.store) + ' 책 구매 링크">' + bookIco() + '<span><i>책 </i>구매 링크</span></a>' +
+        '<a class="sh-buy" data-buy href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener" aria-label="책 구매 링크 — 서점 고르기">' + bookIco() + '<span><i>책 </i>구매 링크</span></a>' +
         '<button type="button" class="icon-btn sh-help" id="helpBtn" aria-label="처음이라면">' + icon('help') + '</button>' +
         '<button type="button" class="btn btn-dark btn-small sh-cover" id="coverBtn">' + icon('download') + '<span>표지 받기</span></button>' +
       '</div>';
@@ -102,7 +102,7 @@
               '<div class="sh-step" data-pane="2">' +
                 '<div class="field"><label for="pfHandle">SNS 아이디</label><input class="input" id="pfHandle" name="handle" maxlength="32" placeholder="@아이디" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next"></div>' +
                 '<div class="field"><label for="pfLine">한 줄 소개</label><input class="input" id="pfLine" name="line" maxlength="60" placeholder="예: 로봇을 가르치는 아이들이 2027년 교실의 주인공이에요" enterkeyhint="next"><span class="hint">‘한 문장’ 카드와 글에 들어가요.</span></div>' +
-                '<div class="field"><label for="pfLink">책 구매 링크</label><input class="input" id="pfLink" name="link" type="url" inputmode="url" maxlength="300" placeholder="https://" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><span class="hint">비워 두면 YES24 책 주소가 들어가요.</span></div>' +
+                '<div class="field"><label for="pfLink">책 구매 링크</label><input class="input" id="pfLink" name="link" type="url" inputmode="url" maxlength="300" placeholder="https://" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><span class="hint">비워 두면 YES24 · 교보문고 · 알라딘 주소가 들어가요.</span></div>' +
               '</div>' +
             '</div>' +
             '<div class="sh-formfoot"><span class="sh-saved" id="pfSaved" aria-live="polite"></span><button type="button" class="btn btn-ghost btn-small" id="pfReset">' + icon('refresh') + '비우기</button></div>' +
@@ -170,13 +170,50 @@
   function bookIco() { return '<img class="bk-ico" src="' + esc(EDU.book.icon) + '" alt="" width="160" height="160" decoding="async">'; }
   EDU.bookIco = bookIco;
 
+  /* ---------------- 책 구매 링크: 서점 세 곳 ---------------- */
+  function shortUrl(u) { return String(u).replace(/^https?:\/\/(www\.)?/, ''); }
+  /** 서점마다 한 줄: 누르면 책 페이지가 열리고, 오른쪽 단추로 주소를 복사한다 */
+  function storeRows() {
+    return EDU.book.stores.map(function (st) {
+      var open = !!st.url;
+      return '<div class="sh-store">' +
+        '<a class="sh-link' + (open ? ' is-open' : '') + '" href="' + esc(st.url || st.search) + '" target="_blank" rel="noopener">' +
+          '<span class="sh-linkico">' + (open ? bookIco() : icon('cart')) + '</span>' +
+          '<span class="sh-linktxt"><strong>' + esc(st.name) + '</strong><small>' + (open ? esc(shortUrl(st.url)) : '서점에서 책 찾기') + '</small></span>' + icon('arrow-up-right') + '</a>' +
+        (open ? '<button type="button" class="icon-btn sh-storecopy" data-copyurl="' + esc(st.url) + '" data-store="' + esc(st.name) + '" aria-label="' + esc(st.name) + ' 주소 복사">' + icon('copy') + '</button>' : '') +
+      '</div>';
+    }).join('');
+  }
+  function allStoreText() { return EDU.book.stores.filter(function (st) { return st.url; }).map(function (st) { return st.name + ' ' + st.url; }).join('\n'); }
+  /** 서점 줄의 복사 단추 · '세 곳 주소 복사' 단추 */
+  function storeClicks(root) {
+    root.addEventListener('click', function (e) {
+      var c = e.target.closest('[data-copyurl]');
+      if (c) { U.copy(c.getAttribute('data-copyurl'), c.getAttribute('data-store') + ' 주소를 복사했어요'); return; }
+      if (e.target.closest('[data-copyall]')) U.copy(allStoreText(), '서점 세 곳 주소를 복사했어요');
+    });
+  }
+  /** '구매 링크' 단추를 누르면 뜨는 창 — 서점을 골라서 간다 */
+  function buySheet() {
+    var d = U.sheet('책 구매 링크',
+      '<div class="sh-buysheet">' + storeRows() +
+        '<button type="button" class="btn btn-line btn-block" data-copyall>' + icon('copy') + '세 곳 주소 한 번에 복사</button>' +
+      '</div>', 'buy-sheet');
+    storeClicks(d);
+    d.addEventListener('click', function (e) { if (e.target.closest('a.sh-link')) setTimeout(function () { if (d.open) d.close(); }, 60); });
+    return d;
+  }
+  EDU.buySheet = buySheet;
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('[data-buy]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+    e.preventDefault(); buySheet();
+  });
+
   /* ---------------- 링크 ---------------- */
   function links() {
     var s = $('#links'), b = EDU.book;
-    var stores = b.stores.map(function (st) {
-      return '<a class="sh-link' + (st.url ? ' is-open' : '') + '" href="' + esc(st.url || st.search) + '" target="_blank" rel="noopener">' +
-        '<span class="sh-linkico">' + (st.url ? bookIco() : icon('cart')) + '</span><span class="sh-linktxt"><strong>' + esc(st.name) + '</strong><small>' + (st.url ? '책 페이지로 가기' : '서점에서 책 찾기') + '</small></span>' + icon('arrow-up-right') + '</a>';
-    }).join('');
+    var stores = storeRows();
     var accounts = EDU.accounts.map(function (a) {
       return '<a class="sh-link" href="' + esc(a.url) + '" target="_blank" rel="noopener"' + (a.app ? ' data-app="' + esc(a.app) + '"' : '') + '>' +
         '<span class="sh-linkico">' + icon(a.app ? 'heart' : 'link') + '</span><span class="sh-linktxt"><strong>' + esc(a.group + ' ' + a.name) + '</strong><small>' + esc(a.handle) + '</small></span>' + icon('arrow-up-right') + '</a>';
@@ -196,8 +233,7 @@
             '<button type="button" role="tab" data-lp="share" aria-selected="false">나누기</button>' +
           '</div></div>' +
         '<div class="sh-linkpanes">' +
-          '<div class="card sh-pane is-on" data-pane="buy"><h3 class="sh-h3">책 구매 링크</h3>' +
-            '<div class="sh-share sh-buyurl"><code>' + esc(b.buy.url.replace(/^https?:\/\//, '')) + '</code><button type="button" class="btn btn-dark btn-small" id="buyCopy" aria-label="구매 링크 복사">' + icon('copy') + '<span>복사</span></button></div>' +
+          '<div class="card sh-pane is-on" data-pane="buy"><div class="sh-h3row"><h3 class="sh-h3">책 구매 링크</h3><button type="button" class="btn btn-line btn-small" data-copyall>' + icon('copy') + '세 곳 주소 복사</button></div>' +
             stores +
             (b.stores.some(function (st) { return st.url; }) ? '' : '<p class="note sh-storenote">지금은 서점 검색 결과로 이어져요. 책 페이지가 열리면 그 주소로 바로 가게 바꿔 둘게요.</p>') +
             '<h3 class="sh-h3 sh-h3b">먼저 나온 세 권</h3><div class="sh-backs">' + back + '</div></div>' +
@@ -226,7 +262,7 @@
       if (a && EDU.env.mobile) { e.preventDefault(); U.openApp(a.getAttribute('data-app'), a.href); }
     });
     $('#copySite').addEventListener('click', function () { U.copy(EDU.site, '주소를 복사했어요'); });
-    $('#buyCopy').addEventListener('click', function () { U.copy(EDU.book.buy.url, '구매 링크를 복사했어요'); });
+    storeClicks(s);
     $('#shareSite').addEventListener('click', function () {
       var data = { title: '2027 대한민국 미래 교육 트렌드 · 저자 홍보 키트', text: '2027 미래 교육 트렌드 저자 홍보 키트예요. 내 이름 넣은 카드랑 글감을 바로 받을 수 있어요.', url: EDU.site };
       if (navigator.share) navigator.share(data).catch(function () {});
@@ -237,7 +273,7 @@
   /* ---------------- footer bar (desktop) ---------------- */
   function footer() {
     $('#siteFooter').innerHTML =
-      '<span><a class="sh-footbuy" href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener">' + bookIco() + '<b>2027 대한민국 미래 교육 트렌드</b><em>구매 링크' + icon('arrow-up-right') + '</em></a> · 미래 교육 집필팀 · 뜨인돌</span>' +
+      '<span><a class="sh-footbuy" data-buy href="' + esc(EDU.book.buy.url) + '" target="_blank" rel="noopener">' + bookIco() + '<b>2027 대한민국 미래 교육 트렌드</b><em>구매 링크' + icon('arrow-up-right') + '</em></a> · 미래 교육 집필팀 · 뜨인돌</span>' +
       '<span class="sh-footsp"></span>' +
       '<span>저자 홍보 키트 · 만든 사람 두목쿼카</span>' +
       '<button type="button" class="sh-egghunt js-eggcount"></button>' +

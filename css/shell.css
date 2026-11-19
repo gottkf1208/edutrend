@@ -156,11 +156,19 @@
 .sh-buy .bk-ico{width:22px;height:22px}
 .sh-link.is-open .sh-linkico{background:#fff;box-shadow:inset 0 0 0 1px var(--line-2)}
 .sh-linkico .bk-ico{width:26px;height:26px}
-.sh-buyurl{margin:8px 0 10px}
-.sh-buyurl code{font-size:12.5px}
-@media(max-width:420px){ .sh-buyurl code{font-size:12px;letter-spacing:-.01em} }
-@media(max-width:380px){ .sh-buyurl .btn span{display:none} .sh-buyurl .btn{padding-left:11px;padding-right:11px} }
-@media(max-width:345px){ .sh-buyurl code{white-space:normal;word-break:break-all;line-height:1.35} }
+.sh-store{display:flex;align-items:center;gap:2px;border-bottom:1px solid var(--line)}
+.sh-store:last-of-type{border-bottom:0}
+.sh-store .sh-link{flex:1;min-width:0;border-bottom:0}
+.sh-store .sh-linktxt{min-width:0}
+.sh-store .sh-linktxt small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh-storecopy{flex:none;width:40px;height:40px;color:var(--ink-2);border-radius:10px}
+.sh-storecopy .i{width:18px;height:18px}
+.sh-storecopy:hover{background:var(--canvas);color:var(--ink)}
+.sh-h3row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px}
+.sh-h3row .sh-h3{margin:0}
+.sh-buysheet{padding:6px 18px 20px}
+.sh-buysheet .btn-block{margin-top:14px}
+.buy-sheet{max-width:440px}
 .sh-footbuy{display:inline-flex;align-items:center;gap:6px;color:inherit;vertical-align:middle;margin-top:-2px}
 .sh-footbuy .bk-ico{width:18px;height:18px}
 .sh-footbuy em{font-style:normal;display:inline-flex;align-items:center;gap:2px;color:var(--cy);font-weight:700;margin-left:2px}
